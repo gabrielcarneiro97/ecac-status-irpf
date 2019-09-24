@@ -1,5 +1,4 @@
 {
-  "main": "./index.js",
   "dependencies": {
     "puppeteer": "^1.20.0"
   },
