@@ -1,0 +1,16 @@
+{
+  "ecacLoginSelectors" : {
+    "cpf": "#NI",
+    "codigoAcesso": "#CodigoAcesso",
+    "senha": "#Senha",
+    "submit": "#login-dados-usuario > p > .submit"
+  },
+  "irpfSelectors": {
+    "janelaAjuda": "#helppanel_text",
+    "fecharJanelaAjuda": ".campo_sele_help > .btClos.glyphicon.glyphicon-remove"
+  },
+  "decSelectors": {
+    "table": "eir-declaracoes > table > tbody",
+    "extratoLink": "eir-declaracoes > table > tbody > tr > td > div > ul > li > a"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "ecacLoginUrl": "https://cav.receita.fazenda.gov.br/autenticacao/login",
+  "irpfUrl": "https://www3.cav.receita.fazenda.gov.br/extratodirpf",
+  "decUrl": "https://www3.cav.receita.fazenda.gov.br/extratodirpf/#/anoexercicio"
+}
