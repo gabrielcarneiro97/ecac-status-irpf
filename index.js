@@ -1,13 +1,12 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
-const url = require('url');
 
 let win;
 let backgroundWin;
 app.on('ready', () => {
   win = new BrowserWindow({
-    width: 300,
-    height: 300,
+    width: 800,
+    height: 600,
     resizable: false,
     backgroundColor: '#e0e0e0',
     autoHideMenuBar: true,
@@ -23,21 +22,9 @@ app.on('ready', () => {
     },
   });
 
-  win.loadURL(
-    url.format({
-      pathname: path.join(__dirname, 'app/index.html'),
-      protocol: 'file:',
-      slashes: true,
-    }),
-  );
+  win.loadFile(path.join(__dirname, 'app/index.html'));
 
-  backgroundWin.loadURL(
-    url.format({
-      pathname: path.join(__dirname, 'app/process.html'),
-      protocol: 'file:',
-      slashes: true,
-    }),
-  );
+  backgroundWin.loadFile(path.join(__dirname, 'app/process.html'));
 
   win.webContents.openDevTools({ mode: 'detach' });
   backgroundWin.webContents.openDevTools({ mode: 'detach' });
@@ -53,14 +40,6 @@ app.on('ready', () => {
 
   ipcMain.on('start', () => {
     backgroundWin.webContents.send('start');
-  });
-
-  ipcMain.on('toUi', (e, m) => {
-    win.webContents.send('message', m);
-  });
-
-  ipcMain.on('toProcessor', (e, m) => {
-    backgroundWin.webContents.send('message', m);
   });
 });
 
