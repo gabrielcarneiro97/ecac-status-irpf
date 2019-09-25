@@ -7,7 +7,7 @@ const {
   folder,
   threadsMax,
   separator,
-} = require('./config.json');
+} = require('../../config/config.json');
 
 const {
   ecacLoginUrl,
