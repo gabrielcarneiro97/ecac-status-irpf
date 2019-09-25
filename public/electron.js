@@ -2,15 +2,16 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 
-require('electron-reload')(__dirname);
+require('electron-reload')(path.join(__dirname, '../src/backend'));
 
 let mainWindow;
 let backgroundWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 900,
-    height: 680,
+    width: 1000,
+    height: 650,
+    resizable: false,
     backgroundColor: '#e0e0e0',
     autoHideMenuBar: true,
     webPreferences: {
@@ -25,7 +26,7 @@ function createWindow() {
     },
   });
   mainWindow.loadURL(isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, '../build/index.html')}`);
-  backgroundWindow.loadFile(path.join(__dirname, '../src/background/process.html'));
+  backgroundWindow.loadFile(path.join(__dirname, '../src/backend/process.html'));
 
   if (isDev) {
     // Open the DevTools.
