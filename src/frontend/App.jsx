@@ -4,8 +4,11 @@ import { HashRouter, Route, Switch } from 'react-router-dom';
 import moment from 'moment';
 import { Layout } from 'antd';
 
-import SideMenu from './components/SideMenu';
 import Main from './components/Main';
+import Config from './components/Config';
+import SideMenu from './components/SideMenu';
+import Foot from './components/Foot';
+import Head from './components/Head';
 
 import 'handsontable/dist/handsontable.full.css';
 import './App.css';
@@ -22,27 +25,23 @@ const {
   Footer,
 } = Layout;
 
-function ConfigMain() {
-  return <div>ConfigMain</div>;
-}
-
 function App() {
   return (
     <HashRouter>
       <Layout>
-        <Header>Header</Header>
-        <Layout style={{ height: '488px' }}>
+        <Header><Head /></Header>
+        <Layout style={{ minHeight: '500px' }}>
           <Sider>
             <SideMenu />
           </Sider>
           <Content style={{ padding: 24 }}>
             <Switch>
-              <Route exact path="/config" component={ConfigMain} />
+              <Route exact path="/config" component={Config} />
               <Route path="/" component={Main} />
             </Switch>
           </Content>
         </Layout>
-        <Footer>Footer</Footer>
+        <Footer style={{ height: '48px' }}><Foot /></Footer>
       </Layout>
     </HashRouter>
   );

@@ -4,7 +4,9 @@ import MainDataTable from './MainDataTable';
 
 function Main() {
   return (
-    <MainDataTable />
+    <>
+      <MainDataTable />
+    </>
   );
 }
 

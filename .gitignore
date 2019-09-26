@@ -1,6 +1,6 @@
 extratos
-dados.csv
 db.db
+config.json
 
 # Logs
 logs

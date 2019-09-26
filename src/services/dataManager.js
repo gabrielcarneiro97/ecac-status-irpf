@@ -4,17 +4,13 @@ const { readConfig } = require('./configManager');
 
 const { dbPath, dbEmptyPath } = readConfig();
 
-function clearDB() {
-  fs.copyFileSync(dbEmptyPath, dbPath);
-}
-
 function checkDB() {
   try {
     fs.readFileSync(dbPath);
     return true;
   } catch (error) {
     if (error.errno === -4058) {
-      clearDB();
+      fs.copyFileSync(dbEmptyPath, dbPath);
       return true;
     }
     return false;
@@ -33,14 +29,22 @@ function dbConnect() {
   });
 }
 
+let lite = dbConnect();
+
+
 function dbClose(db) {
   db.destroy();
 }
 
-async function readData() {
-  const lite = dbConnect();
-  const data = await lite.select('*').from('tb_dados');
+function clearDB() {
   dbClose(lite);
+  fs.copyFileSync(dbEmptyPath, dbPath);
+  lite = dbConnect();
+}
+
+
+async function readData() {
+  const data = await lite.select('*').from('tb_dados');
 
   return data;
 }
@@ -53,7 +57,6 @@ async function readDataAsArrayOfArrays() {
 async function writeData(obj) {
   if (!obj.cpf) return false;
 
-  const lite = dbConnect();
   const data = await lite('tb_dados').select('*').where({ cpf: obj.cpf });
 
   if (data.length !== 0) {
@@ -61,8 +64,6 @@ async function writeData(obj) {
   } else {
     await lite('tb_dados').insert(obj);
   }
-
-  dbClose(lite);
 
   return true;
 }
@@ -80,6 +81,7 @@ async function writeDataFromArray(array) {
 }
 
 async function writeDataFromArrayOfArrays(arrays) {
+  console.log('writeDataFromArrayOfArrays');
   return Promise.all(
     arrays.map(writeDataFromArray),
   );
@@ -87,6 +89,7 @@ async function writeDataFromArrayOfArrays(arrays) {
 
 async function clearAndSave(arrays) {
   clearDB();
+  console.log('clearAndSave');
   return writeDataFromArrayOfArrays(arrays);
 }
 

@@ -34,11 +34,8 @@ class MainDataTable extends Component {
 
   getData = async () => {
     ipcRenderer.send('readData');
-    console.log('getData');
     return new Promise((resolve) => {
       ipcRenderer.once('dbData', (e, { data, dataLength }) => {
-        console.log('dbData');
-        console.log(data);
         this.setState({ data, dataLength }, resolve);
       });
     });
@@ -83,9 +80,13 @@ class MainDataTable extends Component {
 
   check = async () => {
     await this.setStateAsync({ consultaDisabled: true, progress: 0 });
+    console.log('aqui');
     await this.saveChanges();
+    console.log('aqui');
     await this.getData();
+    console.log('aqui');
     await this.removeStatus();
+    console.log('aqui');
 
     ipcRenderer.on('pessoaEnd', (e, { data }) => this.changeStatus(data));
 
@@ -105,8 +106,6 @@ class MainDataTable extends Component {
       progress,
       dataLength,
     } = this.state;
-
-    console.log('render', data);
 
     const percent = dataLength === 0 ? 0
       : (progress / dataLength) * 100;

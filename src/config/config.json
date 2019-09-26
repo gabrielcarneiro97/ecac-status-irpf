@@ -1,7 +1,1 @@
-{
-  "anoConsulta":"2019",
-  "folder":"C:\\Users\\Gabriel\\Desktop\\Teste",
-  "threadsMax":10,
-  "dbPath": "./src/data/db.db",
-  "dbEmptyPath": "./src/data/dbEmpty.db"
-}
+{"anoConsulta":"2019","folder":"C:\\Users\\Gabriel\\Documents\\IRPF-Extratos","threadsMax":10,"dbPath":"./src/data/db.db","dbEmptyPath":"./src/data/dbEmpty.db"}

@@ -1,12 +1,18 @@
 const { ipcRenderer } = require('electron');
+const { homedir } = require('os');
+const path = require('path');
 
 const { start, rfbAccessTime } = require('../services/puppeteer');
 
 const { readDataAsArrayOfArrays, clearAndSave } = require('../services/dataManager');
+const { readConfig, changeConfig } = require('../services/configManager');
+
+const { folder } = readConfig();
+
+if (folder === '') changeConfig('folder', path.join(homedir(), 'Documents', 'IRPF-Extratos'));
 
 ipcRenderer.on('readData', async () => {
   const data = await readDataAsArrayOfArrays();
-  console.log(data);
   ipcRenderer.send('dbData', { data, dataLength: data.length });
 });
 

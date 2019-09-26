@@ -191,7 +191,7 @@ async function startThreads(data, savePDF) {
 async function rfbAccessTime() {
   const init = new Date();
   const browser = await setBrowser();
-  const page = setPage(browser);
+  const page = await setPage(browser);
 
   await page.goto(ecacLoginUrl, { waitUntil: 'networkidle0' });
 
