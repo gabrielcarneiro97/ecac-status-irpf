@@ -43,9 +43,20 @@ function createWindow() {
     backgroundWindow = null;
   });
 
-  ipcMain.on('start', () => {
-    backgroundWindow.webContents.send('start');
-  });
+  // reiniciar o processo!
+  ipcMain.on('readData', () => backgroundWindow.webContents.send('readData'));
+  ipcMain.on('dbData', (e, data) => mainWindow.webContents.send('dbData', data));
+
+  ipcMain.on('saveData', (e, data) => backgroundWindow.webContents.send('saveData', data));
+  ipcMain.on('saveEnd', () => mainWindow.webContents.send('saveEnd'));
+
+  ipcMain.on('startCheck', () => backgroundWindow.webContents.send('startCheck'));
+  ipcMain.on('checkEnd', () => mainWindow.webContents.send('checkEnd'));
+
+  ipcMain.on('pessoaEnd', (e, data) => mainWindow.webContents.send('pessoaEnd', data));
+
+  ipcMain.on('accessTime', () => backgroundWindow.webContents.send('accessTime'));
+  ipcMain.on('timeReturn', (e, data) => mainWindow.webContents.send('timeReturn', data));
 }
 
 app.on('ready', createWindow);
