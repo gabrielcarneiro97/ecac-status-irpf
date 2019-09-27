@@ -2,6 +2,5 @@
   "anoConsulta":"2019",
   "folder":"",
   "threadsMax":10,
-  "dbPath":"/data/db.db",
   "dbEmptyPath":"/data/dbEmpty.db"
 }

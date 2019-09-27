@@ -2,9 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 
-// require('electron-reload')(path.join(__dirname, '/backend'));
-// require('electron-reload')(path.join(__dirname, '/services'));
-// require('electron-reload')(path.join(__dirname, '/electron.js'));
+require('electron-reload')(path.join(__dirname));
 
 let mainWindow;
 let backgroundWindow;

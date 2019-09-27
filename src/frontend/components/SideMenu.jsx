@@ -14,6 +14,7 @@ function SideMenu(props) {
       theme="dark"
       selectedKeys={[pathname]}
       style={{ height: '100%', borderRight: 0 }}
+      inlineCollapsed
     >
       <Menu.Item key="/">
         <Link to="/">

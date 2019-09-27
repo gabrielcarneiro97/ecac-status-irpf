@@ -1,28 +1,32 @@
 const fs = require('fs');
 const path = require('path');
 
+const { getDocsFolder } = require('./docsFolder');
+
 function paths() {
+  const docsFolder = getDocsFolder();
+  const configPath = path.join(docsFolder, 'config.json');
   return {
-    configPath: path.join(__dirname, '../config/config.json'),
+    configPath,
     defaultPath: path.join(__dirname, '../config/default.json'),
   };
 }
 
 function checkConfig() {
   const { configPath, defaultPath } = paths();
+  console.log('readConfig');
   try {
     fs.readFileSync(configPath);
     return true;
   } catch (error) {
-    if (error.errno === -4058) {
-      fs.copyFileSync(defaultPath, configPath);
-      return true;
-    }
-    return false;
+    fs.copyFileSync(defaultPath, configPath);
+    console.log('copied');
+    return true;
   }
 }
 
 function readConfig() {
+  console.log('readConfig');
   checkConfig();
   const { configPath } = paths();
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));

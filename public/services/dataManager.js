@@ -1,13 +1,18 @@
 const fs = require('fs');
 const path = require('path');
 const knex = require('knex');
-const { readConfig } = require('./configManager');
 
-const { dbPath, dbEmptyPath } = readConfig();
+const { readConfig } = require('./configManager');
+const { getDocsFolder } = require('./docsFolder');
+
+const { dbEmptyPath } = readConfig();
 
 function paths() {
+  const docsFolder = getDocsFolder();
+
+  const fullDbPath = path.join(docsFolder, 'db.db');
   return {
-    fullDbPath: path.join(__dirname, '/..', dbPath),
+    fullDbPath,
     fullDbEmptyPath: path.join(__dirname, '/..', dbEmptyPath),
   };
 }
@@ -18,11 +23,8 @@ function checkDB() {
     fs.readFileSync(fullDbPath);
     return true;
   } catch (error) {
-    if (error.errno === -4058) {
-      fs.copyFileSync(fullDbEmptyPath, fullDbPath);
-      return true;
-    }
-    return false;
+    fs.copyFileSync(fullDbEmptyPath, fullDbPath);
+    return true;
   }
 }
 

@@ -1,5 +1,7 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
+const chromium = require('chromium');
 const fs = require('fs');
+const isDev = require('electron-is-dev');
 
 const { readConfig } = require('../configManager');
 const { writeData, readData } = require('../dataManager');
@@ -20,7 +22,9 @@ const {
 const irpfDecUrl = (ano) => `${decUrl}/${ano}`;
 
 async function setBrowser() {
-  return puppeteer.launch({ headless: true });
+  const chromiumPath = isDev ? chromium.path : chromium.path.replace('app.asar', 'app.asar.unpacked');
+  console.log(chromiumPath);
+  return puppeteer.launch({ headless: true, executablePath: chromiumPath });
 }
 
 async function setPage(browser) {
@@ -174,6 +178,7 @@ async function setThread(data, threadNum, savePDF) {
       await end(result); // eslint-disable-line
       threadResult.push(result);
     } catch (err) {
+      console.error(err);
       console.log(`${threadNum})`, pessoa.nome, ' - Falha no Acesso');
 
       const result = { ...pessoa, decStatus: 'Falha no Acesso' };
