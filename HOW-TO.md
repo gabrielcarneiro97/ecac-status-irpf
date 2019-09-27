@@ -19,11 +19,14 @@ atalho será criado na Área de Trabalho.
 <p align="center">
   <img src="https://i.imgur.com/GamoIG9.png" alt="drawing" width="600"/>
 </p>
+
 2. Tudo que você precisa fazer é preencher o quadro com as informações solicitadas, cada uma em sua coluna. **ATENÇÃO:**
 o campo de CPF e código de acesso devem ser preenchidos **APENAS COM NÚMEROS!!** A última coluna não precisa ser preenchida, o programa fará isso automaticamente.
 <p align="center">
   <img src="https://i.imgur.com/4QoX4Fg.png" alt="drawing" width="600"/>
 </p>
+
 3. Após preencher todos os campos, clique em **Consultar RFB**. O processo começará logo após isso. Você pode acompanhar o andamento do processo através do percentual que aparece ao lado do botão.
 A medida em que as consultas forem sendo feitas, a tabela será atualizada.
+
 4. Caso você queira que os extratos sejam salvos em PDF, basta marcar a caixa **Salvar Extratos**. Os extratos serão salvos na pasta indicada.
