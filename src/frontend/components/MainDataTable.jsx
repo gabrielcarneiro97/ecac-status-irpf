@@ -95,8 +95,9 @@ class MainDataTable extends Component {
 
   check = async () => {
     const { savePDF } = this.state;
+    const tableData = this.getTableData();
+    await this.setStateAsync({ consultaDisabled: true, data: tableData, progress: 0 });
     await this.saveChanges();
-    await this.setStateAsync({ consultaDisabled: true, progress: 0 });
     await this.getData();
     await this.removeStatus();
 
