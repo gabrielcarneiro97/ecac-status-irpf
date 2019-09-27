@@ -30,3 +30,6 @@ o campo de CPF e código de acesso devem ser preenchidos **APENAS COM NÚMEROS!!
 A medida em que as consultas forem sendo feitas, a tabela será atualizada.
 
 4. Caso você queira que os extratos sejam salvos em PDF, basta marcar a caixa **Salvar Extratos**. Os extratos serão salvos na pasta indicada.
+<p align="center">
+  <img src="https://i.imgur.com/Y2eNECA.png" alt="drawing" width="600"/>
+</p>
