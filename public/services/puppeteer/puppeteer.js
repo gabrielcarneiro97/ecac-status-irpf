@@ -216,7 +216,7 @@ async function start(savePDF) {
 }
 
 async function loadChromium() {
-  const browser = setBrowser();
+  const browser = await setBrowser();
   finish(browser);
 }
 

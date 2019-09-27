@@ -128,8 +128,6 @@ class MainDataTable extends Component {
       appConfig,
     } = this.state;
 
-    console.log(data);
-
     const percent = dataLength === 0 ? 0
       : (progress / dataLength) * 100;
 
