@@ -23,7 +23,6 @@ const irpfDecUrl = (ano) => `${decUrl}/${ano}`;
 
 async function setBrowser() {
   const chromiumPath = isDev ? chromium.path : chromium.path.replace('app.asar', 'app.asar.unpacked');
-  console.log(chromiumPath);
   return puppeteer.launch({ headless: true, executablePath: chromiumPath });
 }
 
@@ -216,9 +215,15 @@ async function start(savePDF) {
   return startThreads(pessoasSeparadas, savePDF);
 }
 
+async function loadChromium() {
+  const browser = setBrowser();
+  finish(browser);
+}
+
 
 module.exports = {
   checkStatus,
   start,
   rfbAccessTime,
+  loadChromium,
 };

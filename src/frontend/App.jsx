@@ -31,7 +31,7 @@ function App() {
       <Layout>
         <Header><Head /></Header>
         <Layout style={{ minHeight: '500px' }}>
-          <Sider>
+          <Sider collapsed style={{ paddingTop: '0' }}>
             <SideMenu />
           </Sider>
           <Content style={{ padding: 24 }}>

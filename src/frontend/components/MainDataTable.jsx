@@ -8,6 +8,7 @@ import {
   Progress,
   Checkbox,
   Alert,
+  Divider,
 } from 'antd';
 
 const { ipcRenderer } = window.require('electron');
@@ -134,6 +135,13 @@ class MainDataTable extends Component {
 
     return (
       <>
+        <Row type="flex" justify="center" align="middle" gutter={8}>
+          <Col>
+            <Divider orientation="left">
+              Consultar Declarações
+            </Divider>
+          </Col>
+        </Row>
         <Row type="flex" justify="end" align="middle" gutter={8}>
           <Col>
             {
@@ -172,16 +180,16 @@ class MainDataTable extends Component {
             </div>
           </Col>
         </Row>
-        <Row style={{ marginTop: '10px' }}>
+        <Row style={{ marginTop: '20px' }} type="flex" justify="center" align="middle">
           <Col>
             <HotTable
               data={data.length === 0 ? [['', '', '', '', '']] : data}
               ref={this.hotTableComponent}
               colHeaders={this.colHeaders}
               rowHeaders
-              width="750"
-              height="300"
-              minRows="5"
+              width="850"
+              height="340"
+              minRows="20"
               stretchH="all"
               allowInsertRow
               allowRemoveRow
