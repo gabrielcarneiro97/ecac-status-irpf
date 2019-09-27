@@ -23,5 +23,7 @@ module.exports = {
     'react',
   ],
   rules: {
+    'import/no-dynamic-require': 0,
+    'import/no-extraneous-dependencies': ['error', {'devDependencies': true, 'optionalDependencies': false, 'peerDependencies': false}]
   },
 };

@@ -200,7 +200,7 @@ async function rfbAccessTime() {
   return new Date() - init;
 }
 
-async function start() {
+async function start(savePDF) {
   const { folder, threadsMax, dataPath } = readConfig();
 
   process.setMaxListeners(threadsMax * 5);
@@ -208,7 +208,7 @@ async function start() {
   const pessoas = await readData(dataPath);
   const pessoasSeparadas = divideData(pessoas);
 
-  return startThreads(pessoasSeparadas);
+  return startThreads(pessoasSeparadas, savePDF);
 }
 
 

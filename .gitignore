@@ -1,7 +1,7 @@
 extratos
 db.db
 config.json
-
+dist
 # Logs
 logs
 *.log

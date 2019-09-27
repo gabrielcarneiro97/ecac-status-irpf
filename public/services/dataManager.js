@@ -1,16 +1,25 @@
 const fs = require('fs');
+const path = require('path');
 const knex = require('knex');
 const { readConfig } = require('./configManager');
 
 const { dbPath, dbEmptyPath } = readConfig();
 
+function paths() {
+  return {
+    fullDbPath: path.join(__dirname, '/..', dbPath),
+    fullDbEmptyPath: path.join(__dirname, '/..', dbEmptyPath),
+  };
+}
+
 function checkDB() {
+  const { fullDbEmptyPath, fullDbPath } = paths();
   try {
-    fs.readFileSync(dbPath);
+    fs.readFileSync(fullDbPath);
     return true;
   } catch (error) {
     if (error.errno === -4058) {
-      fs.copyFileSync(dbEmptyPath, dbPath);
+      fs.copyFileSync(fullDbEmptyPath, fullDbPath);
       return true;
     }
     return false;
@@ -19,11 +28,12 @@ function checkDB() {
 
 function dbConnect() {
   checkDB();
+  const { fullDbPath } = paths();
 
   return knex({
     client: 'sqlite3',
     connection: {
-      filename: dbPath,
+      filename: fullDbPath,
     },
     useNullAsDefault: true,
   });
@@ -38,7 +48,8 @@ function dbClose(db) {
 
 function clearDB() {
   dbClose(lite);
-  fs.copyFileSync(dbEmptyPath, dbPath);
+  const { fullDbEmptyPath, fullDbPath } = paths();
+  fs.copyFileSync(fullDbEmptyPath, fullDbPath);
   lite = dbConnect();
 }
 
@@ -81,7 +92,6 @@ async function writeDataFromArray(array) {
 }
 
 async function writeDataFromArrayOfArrays(arrays) {
-  console.log('writeDataFromArrayOfArrays');
   return Promise.all(
     arrays.map(writeDataFromArray),
   );
@@ -89,7 +99,6 @@ async function writeDataFromArrayOfArrays(arrays) {
 
 async function clearAndSave(arrays) {
   clearDB();
-  console.log('clearAndSave');
   return writeDataFromArrayOfArrays(arrays);
 }
 

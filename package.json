@@ -1,12 +1,15 @@
 {
   "name": "ecac-status-irpf",
-  "version": "0.1.0",
+  "version": "0.1.6",
+  "productName": "Consulta eCAC",
+  "homepage": "./",
+  "author": "Gabriel Carneiro",
+  "description": "Servico de Acesso ao eCAC",
   "private": true,
   "main": "public/electron.js",
   "dependencies": {
     "@handsontable/react": "^3.0.0",
     "antd": "^3.23.4",
-    "electron": "^6.0.10",
     "electron-is-dev": "^1.1.0",
     "electron-reload": "^1.5.0",
     "handsontable": "^7.1.1",
@@ -26,7 +29,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron-dev": "concurrently \"set BROWSER=none&&yarn start\" \"wait-on http://localhost:3000 && electron .\"",
-    "postinstall": "install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "preelectron-pack": "yarn build",
+    "electron-pack": "electron-builder -w --ia32"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -44,8 +49,11 @@
     ]
   },
   "devDependencies": {
+    "@rescripts/cli": "^0.0.12",
+    "@rescripts/rescript-env": "^0.0.10",
     "babel-eslint": "^10.0.3",
     "concurrently": "^4.1.2",
+    "electron": "^6.0.10",
     "electron-builder": "^21.2.0",
     "eslint": "^6.4.0",
     "eslint-config-airbnb": "^18.0.1",
@@ -53,6 +61,19 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^1.7.0",
+    "typescript": "^3.6.3",
     "wait-on": "^3.3.0"
+  },
+  "win": {
+    "icon": "./icon.png"
+  },
+  "build": {
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
   }
 }

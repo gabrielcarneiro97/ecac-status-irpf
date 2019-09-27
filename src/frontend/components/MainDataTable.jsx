@@ -6,6 +6,8 @@ import {
   Row,
   Col,
   Progress,
+  Checkbox,
+  Alert,
 } from 'antd';
 
 const { ipcRenderer } = window.require('electron');
@@ -21,6 +23,8 @@ class MainDataTable extends Component {
       dataLength: 0,
       progress: 0,
       consultaDisabled: false,
+      savePDF: false,
+      appConfig: {},
     };
 
     this.hotTableComponent = React.createRef();
@@ -28,9 +32,20 @@ class MainDataTable extends Component {
 
   componentDidMount() {
     this.getData();
+    this.getConfig();
   }
 
   setStateAsync = (newState) => new Promise((resolve) => this.setState(newState, resolve));
+
+  getConfig = async () => {
+    ipcRenderer.send('getConfig');
+    return new Promise((resolve) => {
+      ipcRenderer.once('configReturn', async (e, { config }) => {
+        await this.setStateAsync({ appConfig: config });
+        resolve(config);
+      });
+    });
+  }
 
   getData = async () => {
     ipcRenderer.send('readData');
@@ -62,10 +77,9 @@ class MainDataTable extends Component {
     const tableData = this.getTableData();
     ipcRenderer.send('saveData', { data: tableData });
     return new Promise((resolve) => {
+      this.setState({ data: tableData });
       ipcRenderer.once('saveEnd', () => {
-        this.setState({ data: tableData }, () => {
-          resolve();
-        });
+        resolve();
       });
     });
   }
@@ -79,18 +93,15 @@ class MainDataTable extends Component {
   }
 
   check = async () => {
-    await this.setStateAsync({ consultaDisabled: true, progress: 0 });
-    console.log('aqui');
+    const { savePDF } = this.state;
     await this.saveChanges();
-    console.log('aqui');
+    await this.setStateAsync({ consultaDisabled: true, progress: 0 });
     await this.getData();
-    console.log('aqui');
     await this.removeStatus();
-    console.log('aqui');
 
     ipcRenderer.on('pessoaEnd', (e, { data }) => this.changeStatus(data));
 
-    ipcRenderer.send('startCheck');
+    ipcRenderer.send('startCheck', { savePDF });
     ipcRenderer.once('checkEnd', async () => {
       ipcRenderer.removeAllListeners('pessoaEnd');
 
@@ -99,13 +110,24 @@ class MainDataTable extends Component {
     });
   }
 
+  handleCheckBox = () => {
+    this.setState((prevState) => ({
+      savePDF: !prevState.savePDF,
+      data: this.getTableData(),
+    }));
+  }
+
   render() {
     const {
       data,
       consultaDisabled,
       progress,
       dataLength,
+      savePDF,
+      appConfig,
     } = this.state;
+
+    console.log(data);
 
     const percent = dataLength === 0 ? 0
       : (progress / dataLength) * 100;
@@ -114,13 +136,39 @@ class MainDataTable extends Component {
       <>
         <Row type="flex" justify="end" align="middle" gutter={8}>
           <Col>
+            {
+              savePDF
+              && (
+              <Alert
+                message={(
+                  <span style={{ fontSize: '12px' }}>
+                    Extratos sendo salvos em:&nbsp;
+                    {appConfig.folder}
+                  </span>
+                )}
+                type="info"
+                showIcon
+              />
+              )
+            }
+          </Col>
+          <Col>
+            <Checkbox
+              onChange={this.handleCheckBox}
+              checked={savePDF}
+              disabled={consultaDisabled}
+            >
+              Salvar Extratos
+            </Checkbox>
+          </Col>
+          <Col>
             <Button type="primary" onClick={this.check} disabled={consultaDisabled}>
               Consultar RFB
             </Button>
           </Col>
           <Col>
             <div>
-              <Progress percent={percent} type="circle" width={40} status="active" />
+              <Progress percent={parseFloat(percent.toFixed(1))} type="circle" width={40} status="active" />
             </div>
           </Col>
         </Row>

@@ -49,7 +49,7 @@ class CheckRFBStatus extends Component {
       message = 'Conexão Ótima!';
       type = 'success';
     } else if (time <= 5000) {
-      message = 'Conexão Ok';
+      message = 'Conexão OK';
       type = 'success';
     } else if (time <= 10000) {
       message = 'Conexão um Pouco Lenta';
