@@ -5,4 +5,4 @@
   <img src="https://i.imgur.com/GamoIG9.png" alt="drawing" width="600"/>
 </p>
 
-Para informações de uso e para encontrar a última versão, clique aqui.
+Para informações de uso e para encontrar a última versão, clique [aqui](https://github.com/gabrielcarneiro97/ecac-status-irpf/blob/master/HOW-TO.md).

@@ -8,7 +8,10 @@ Depois de gerar os códigos de acesso siga o passo-a-passo abaixo.
 
 ### 1. Baixando e Instalando :point_down:
 
-1. Para baixar o *Consulta eCac* basta acessar este link.
+1. Para baixar o *Consulta eCac* basta acessar este [link](https://github.com/gabrielcarneiro97/ecac-status-irpf/releases) e clicar em *Consulta.eCAC.Setup.x.x.xx.exe*.
+<p align="center">
+  <img src="https://i.imgur.com/yLoyIPZ.png" alt="drawing" width="600"/>
+</p>
 2. Para instalar basta executar a Setup que foi baixada no passo anterior. Após a execução do Setup o programa iniciará automaticamente e um
 atalho será criado na Área de Trabalho.
 
