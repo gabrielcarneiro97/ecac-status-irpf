@@ -22,8 +22,8 @@ ipcRenderer.on('saveData', async (e, { data }) => {
   ipcRenderer.send('saveEnd');
 });
 
-ipcRenderer.on('startCheck', async (e, { savePDF }) => {
-  await start(savePDF);
+ipcRenderer.on('startCheck', async (e, { savePDF, anoConsulta }) => {
+  await start(anoConsulta, savePDF);
   ipcRenderer.send('checkEnd');
 });
 

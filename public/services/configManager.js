@@ -14,19 +14,16 @@ function paths() {
 
 function checkConfig() {
   const { configPath, defaultPath } = paths();
-  console.log('readConfig');
   try {
     fs.readFileSync(configPath);
     return true;
   } catch (error) {
     fs.copyFileSync(defaultPath, configPath);
-    console.log('copied');
     return true;
   }
 }
 
 function readConfig() {
-  console.log('readConfig');
   checkConfig();
   const { configPath } = paths();
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));

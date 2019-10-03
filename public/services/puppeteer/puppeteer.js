@@ -54,8 +54,7 @@ async function executeLogin(page, contribInfos) {
   return true;
 }
 
-async function gotoIRPF(page) {
-  const { anoConsulta } = readConfig();
+async function gotoIRPF(page, anoConsulta) {
   await page.goto(irpfUrl, { waitUntil: 'networkidle0' });
 
   await page.evaluate(({ janelaAjuda, fecharJanelaAjuda }) => {
@@ -89,10 +88,10 @@ async function gotoExtrato(page) {
   return true;
 }
 
-async function saveExtratoToPDF(page, contribInfos) {
+async function saveExtratoToPDF(page, contribInfos, anoConsulta) {
   const { folder } = readConfig();
 
-  await page.pdf({ path: `${folder}/${contribInfos.nome} - ${contribInfos.cpf}.pdf`, format: 'A4' });
+  await page.pdf({ path: `${folder}/${anoConsulta} - ${contribInfos.cpf} - ${contribInfos.nome}.pdf`, format: 'A4' });
 
   return true;
 }
@@ -101,20 +100,20 @@ async function finish(browser) {
   return browser.close();
 }
 
-async function checkStatus(contribInfos, savePDF) {
+async function checkStatus(contribInfos, anoConsulta, savePDF) {
   const browser = await setBrowser();
   try {
     const page = await setPage(browser);
 
     await executeLogin(page, contribInfos);
 
-    await gotoIRPF(page);
+    await gotoIRPF(page, anoConsulta);
 
     const decStatus = await getStatus(page);
 
     await gotoExtrato(page);
 
-    if (savePDF) await saveExtratoToPDF(page, contribInfos);
+    if (savePDF) await saveExtratoToPDF(page, contribInfos, anoConsulta);
 
     await finish(browser);
 
@@ -163,24 +162,23 @@ async function end(pessoa) {
   ]);
 }
 
-async function setThread(data, threadNum, savePDF) {
+async function setThread(data, threadNum, anoConsulta, savePDF) {
   const threadResult = [];
   for (let count = 0; count < data.length; count += 1) {
     const pessoa = data[count];
     console.log(`${threadNum})`, pessoa.nome, ' - Começou');
     try {
-      const decStatus = await checkStatus(pessoa, savePDF); // eslint-disable-line
+      const decStatus = await checkStatus(pessoa, anoConsulta, savePDF); // eslint-disable-line
 
-      console.log(`${threadNum})`, pessoa.nome, '-', decStatus);
+      console.log(`${threadNum})`, pessoa.nome, '-', `${anoConsulta} - ${decStatus}`);
 
-      const result = { ...pessoa, decStatus };
+      const result = { ...pessoa, decStatus: `${anoConsulta} - ${decStatus}` };
       await end(result); // eslint-disable-line
       threadResult.push(result);
     } catch (err) {
       console.error(err);
-      console.log(`${threadNum})`, pessoa.nome, ' - Falha no Acesso');
-
-      const result = { ...pessoa, decStatus: 'Falha no Acesso' };
+      console.log(`${threadNum})`, pessoa.nome, '-', `${anoConsulta} - Falha no Acesso`);
+      const result = { ...pessoa, decStatus: `${anoConsulta} - Falha no Acesso` };
       await end(result); // eslint-disable-line
       threadResult.push(result);
     }
@@ -188,8 +186,8 @@ async function setThread(data, threadNum, savePDF) {
   return threadResult;
 }
 
-async function startThreads(data, savePDF) {
-  return Promise.all(data.map((d, i) => setThread(d, i, savePDF)));
+async function startThreads(data, anoConsulta, savePDF) {
+  return Promise.all(data.map((d, i) => setThread(d, i, anoConsulta, savePDF)));
 }
 
 async function rfbAccessTime() {
@@ -204,7 +202,7 @@ async function rfbAccessTime() {
   return new Date() - init;
 }
 
-async function start(savePDF) {
+async function start(anoConsulta, savePDF) {
   const { folder, threadsMax, dataPath } = readConfig();
 
   process.setMaxListeners(threadsMax * 5);
@@ -212,7 +210,7 @@ async function start(savePDF) {
   const pessoas = await readData(dataPath);
   const pessoasSeparadas = divideData(pessoas);
 
-  return startThreads(pessoasSeparadas, savePDF);
+  return startThreads(pessoasSeparadas, anoConsulta, savePDF);
 }
 
 async function loadChromium() {

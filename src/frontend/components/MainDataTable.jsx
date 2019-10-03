@@ -9,7 +9,10 @@ import {
   Checkbox,
   Alert,
   Divider,
+  message,
 } from 'antd';
+
+import SelectAno from './SelectAno';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -26,6 +29,7 @@ class MainDataTable extends Component {
       consultaDisabled: false,
       savePDF: false,
       appConfig: {},
+      anoConsulta: '2019',
     };
 
     this.hotTableComponent = React.createRef();
@@ -94,7 +98,7 @@ class MainDataTable extends Component {
   }
 
   check = async () => {
-    const { savePDF } = this.state;
+    const { savePDF, anoConsulta } = this.state;
     const tableData = this.getTableData();
     await this.setStateAsync({ consultaDisabled: true, data: tableData, progress: 0 });
     await this.saveChanges();
@@ -102,11 +106,11 @@ class MainDataTable extends Component {
     await this.removeStatus();
 
     ipcRenderer.on('pessoaEnd', (e, { data }) => this.changeStatus(data));
-
-    ipcRenderer.send('startCheck', { savePDF });
+    message.info('Consulta Iniciada');
+    ipcRenderer.send('startCheck', { savePDF, anoConsulta });
     ipcRenderer.once('checkEnd', async () => {
       ipcRenderer.removeAllListeners('pessoaEnd');
-
+      message.success('Consulta Finalizada com Sucesso');
       await this.getData();
       await this.setStateAsync({ consultaDisabled: false });
     });
@@ -117,6 +121,11 @@ class MainDataTable extends Component {
       savePDF: !prevState.savePDF,
       data: this.getTableData(),
     }));
+  }
+
+  handleAno = (ano) => {
+    console.log('handleAno', ano);
+    this.setState({ anoConsulta: ano.toString() });
   }
 
   render() {
@@ -167,6 +176,9 @@ class MainDataTable extends Component {
             >
               Salvar Extratos
             </Checkbox>
+          </Col>
+          <Col>
+            <SelectAno onChange={this.handleAno} />
           </Col>
           <Col>
             <Button type="primary" onClick={this.check} disabled={consultaDisabled}>
