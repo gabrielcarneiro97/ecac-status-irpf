@@ -2,8 +2,6 @@ import React from 'react';
 
 import { Col, Row } from 'antd';
 
-const { version } = require('../../../package.json');
-
 function Head() {
   return (
     <Row
@@ -17,8 +15,7 @@ function Head() {
             color: 'white',
           }}
         >
-          Consulta eCAC&nbsp;
-          {version}
+          Consulta eCAC
         </h3>
       </Col>
     </Row>

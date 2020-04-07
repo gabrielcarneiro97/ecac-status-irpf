@@ -18,6 +18,8 @@ import 'antd/dist/antd.css';
 
 moment.locale('pt-br');
 
+const { version } = require('../../package.json');
+
 const {
   Header,
   Sider,
@@ -26,6 +28,8 @@ const {
 } = Layout;
 
 function App() {
+  document.title = `Consulta eCac ${version}`;
+
   return (
     <HashRouter>
       <Layout>
