@@ -29,7 +29,7 @@ class MainDataTable extends Component {
       consultaDisabled: false,
       savePDF: false,
       appConfig: {},
-      anoConsulta: '2019',
+      anoConsulta: '2020',
     };
 
     this.hotTableComponent = React.createRef();

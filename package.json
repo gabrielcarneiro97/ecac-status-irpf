@@ -22,7 +22,7 @@
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-router-dom": "^5.1.0",
-    "react-scripts": "3.1.2",
+    "react-scripts": "^3.4.1",
     "sqlite3": "^4.1.0"
   },
   "scripts": {
@@ -30,9 +30,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron-dev": "concurrently \"set BROWSER=none&&yarn start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron-dev": "concurrently \"set BROWSER=none&&npm run start\" \"wait-on http://localhost:3000 && electron .\"",
     "postinstall": "electron-builder install-app-deps",
-    "preelectron-pack": "yarn build",
+    "preelectron-pack": "npm run build",
     "electron-pack": "electron-builder -w --ia32"
   },
   "eslintConfig": {

@@ -1,47 +1,39 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Select } from 'antd';
 
 const { Option } = Select;
 
-function setAnos() {
+function anos() {
   const atual = (new Date()).getFullYear();
-  const anos = [];
-  for (let ano = 2014; ano <= atual; ano += 1) anos.push(ano);
+  const anosArr = [];
+  for (let ano = 2014; ano <= atual; ano += 1) anosArr.push(ano);
 
-  return anos;
+  return anosArr;
 }
 
-class SelectAno extends Component {
-  constructor(props) {
-    super(props);
+function SelectAno(props) {
+  const [ano, setAno] = useState('2020');
 
-    this.state = {
-      ano: '2019',
-    };
-  }
+  const handleChange = (a) => {
+    const { onChange } = props;
+    setAno(a);
+    onChange(a);
+  };
 
-  handleChange = (ano) => {
-    const { onChange } = this.props;
-    this.setState({ ano }, () => onChange(ano));
-  }
-
-  render() {
-    const { ano } = this.state;
-
-    const anos = setAnos();
-    const opts = anos.map((a) => <Option key={`select-ano-${a}`} value={a}>{a}</Option>);
-
-    return (
-      <Select defaultValue={ano} onChange={this.handleChange} style={{ minWidth: '90px' }}>
-        {opts}
-      </Select>
-    );
-  }
+  return (
+    <Select defaultValue={ano} onChange={handleChange} style={{ minWidth: '90px' }}>
+      {anos().map((a) => <Option key={`select-ano-${a}`} value={a}>{a}</Option>)}
+    </Select>
+  );
 }
 
 SelectAno.propTypes = {
-  onChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func,
+};
+
+SelectAno.defaultProps = {
+  onChange: () => undefined,
 };
 
 export default SelectAno;
