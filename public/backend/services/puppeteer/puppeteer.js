@@ -218,7 +218,6 @@ async function loadChromium() {
   finish(browser);
 }
 
-
 module.exports = {
   checkStatus,
   start,

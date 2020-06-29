@@ -13,7 +13,7 @@ function paths() {
   const fullDbPath = path.join(docsFolder, 'db.db');
   return {
     fullDbPath,
-    fullDbEmptyPath: path.join(__dirname, '/..', dbEmptyPath),
+    fullDbEmptyPath: path.join(__dirname, '../..', dbEmptyPath),
   };
 }
 

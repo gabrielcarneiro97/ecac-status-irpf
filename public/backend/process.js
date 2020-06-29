@@ -2,9 +2,9 @@ const { ipcRenderer } = require('electron');
 const { homedir } = require('os');
 const path = require('path');
 
-const { start, rfbAccessTime, loadChromium } = require('../services/puppeteer');
-const { readDataAsArrayOfArrays, clearAndSave } = require('../services/dataManager');
-const { readConfig, changeConfig } = require('../services/configManager');
+const { start, rfbAccessTime, loadChromium } = require('./services/puppeteer');
+const { readDataAsArrayOfArrays, clearAndSave } = require('./services/dataManager');
+const { readConfig, changeConfig } = require('./services/configManager');
 
 const { folder } = readConfig();
 
