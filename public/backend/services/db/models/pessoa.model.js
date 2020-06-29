@@ -1,5 +1,5 @@
 const { DataTypes, Model } = require('sequelize');
-const { db } = require('../db.service');
+const { db } = require('../connection.service');
 
 class Pessoa extends Model {}
 

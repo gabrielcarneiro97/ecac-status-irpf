@@ -1,29 +1,24 @@
+const { homedir } = require('os');
 const path = require('path');
-const { Sequelize } = require('sequelize');
+const Config = require('./models/config.model');
 
-const { getDocsFolder } = require('../docsFolder');
+const { db } = require('./connection.service');
 
-let seql = null;
+async function init() {
+  await db().sync();
 
-function dbPath() {
-  const folder = getDocsFolder();
-  const fileName = 'seql-db.db';
-  const filePath = path.join(folder, fileName);
+  const checkStatus = await Config.findByPk('set');
 
-  return filePath;
-}
-
-function db() {
-  if (seql) return seql;
-
-  seql = new Sequelize({
-    dialect: 'sqlite',
-    storage: dbPath(),
-  });
-
-  return seql;
+  if (!checkStatus) {
+    await Config.createConfigs([
+      { nome: 'set', valor: 'OK' },
+      { nome: 'threadsMax', valor: '10' },
+      { nome: 'anoConsulta', valor: '2020' },
+      { nome: 'folder', valor: path.join(homedir(), 'Documents', 'IRPF-Extratos') },
+    ]);
+  }
 }
 
 module.exports = {
-  db,
+  init,
 };
