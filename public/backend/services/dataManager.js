@@ -2,10 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const knex = require('knex');
 
-const { readConfig } = require('./configManager');
 const { getDocsFolder } = require('./docsFolder');
 
-const { dbEmptyPath } = readConfig();
 
 function paths() {
   const docsFolder = getDocsFolder();

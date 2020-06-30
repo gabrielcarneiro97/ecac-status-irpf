@@ -18,7 +18,7 @@ Consulta.init({
     },
   },
   ano: DataTypes.INTEGER,
-  status: DataTypes.INTEGER,
+  status: DataTypes.STRING,
   dataHora: {
     type: DataTypes.TIME,
     defaultValue: DataTypes.NOW,

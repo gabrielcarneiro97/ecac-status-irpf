@@ -1,14 +1,8 @@
 const { ipcRenderer } = require('electron');
-const { homedir } = require('os');
-const path = require('path');
 
-const { start, rfbAccessTime, loadChromium } = require('./services/puppeteer');
+const { rfbAccessTime, loadChromium } = require('./services/puppeteer');
 const { readDataAsArrayOfArrays, clearAndSave } = require('./services/dataManager');
-const { readConfig, changeConfig } = require('./services/configManager');
-
-const { folder } = readConfig();
-
-if (folder === '') changeConfig('folder', path.join(homedir(), 'Documents', 'IRPF-Extratos'));
+const Config = require('./services/db/models/config.model');
 
 loadChromium();
 
@@ -23,7 +17,6 @@ ipcRenderer.on('saveData', async (e, { data }) => {
 });
 
 ipcRenderer.on('startCheck', async (e, { savePDF, anoConsulta }) => {
-  await start(anoConsulta, savePDF);
   ipcRenderer.send('checkEnd');
 });
 
@@ -33,6 +26,6 @@ ipcRenderer.on('accessTime', async () => {
   ipcRenderer.send('timeReturn', { time });
 });
 
-ipcRenderer.on('getConfig', () => {
-  ipcRenderer.send('configReturn', { config: readConfig() });
+ipcRenderer.on('getConfig', async () => {
+  ipcRenderer.send('configReturn', { config: await Config.all() });
 });

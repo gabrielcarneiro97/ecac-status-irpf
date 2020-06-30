@@ -45,6 +45,9 @@ function createWindow() {
     backgroundWindow = null;
   });
 
+  console.log(mainWindow.webContents.id);
+  console.log(backgroundWindow.webContents.id);
+
   // reiniciar o processo!
   ipcMain.on('readData', () => backgroundWindow.webContents.send('readData'));
   ipcMain.on('dbData', (e, data) => mainWindow.webContents.send('dbData', data));

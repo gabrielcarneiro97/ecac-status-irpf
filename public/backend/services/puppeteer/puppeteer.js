@@ -3,7 +3,6 @@ const chromium = require('chromium');
 const fs = require('fs');
 const isDev = require('electron-is-dev');
 
-const { readConfig } = require('../configManager');
 const { writeData, readData } = require('../dataManager');
 const { callEnd } = require('../ipcService');
 
@@ -18,6 +17,7 @@ const {
   irpfSelectors,
   decSelectors,
 } = require('./selectors.json');
+const Config = require('../db/models/config.model');
 
 const irpfDecUrl = (ano) => `${decUrl}/${ano}`;
 
@@ -89,7 +89,7 @@ async function gotoExtrato(page) {
 }
 
 async function saveExtratoToPDF(page, contribInfos, anoConsulta) {
-  const { folder } = readConfig();
+  const folder = await Config.getConfig('folder');
 
   await page.pdf({ path: `${folder}/${anoConsulta} - ${contribInfos.cpf} - ${contribInfos.nome}.pdf`, format: 'A4' });
 
@@ -111,9 +111,10 @@ async function checkStatus(contribInfos, anoConsulta, savePDF) {
 
     const decStatus = await getStatus(page);
 
-    await gotoExtrato(page);
-
-    if (savePDF) await saveExtratoToPDF(page, contribInfos, anoConsulta);
+    if (savePDF) {
+      await gotoExtrato(page);
+      await saveExtratoToPDF(page, contribInfos, anoConsulta);
+    }
 
     await finish(browser);
 
@@ -134,8 +135,8 @@ function checkFolder(path) {
   }
 }
 
-function divideData(data) {
-  const { threadsMax } = readConfig();
+async function divideData(data) {
+  const threadsMax = await Config.getConfig('threadsMax');
   const pessoasSeparadas = [];
 
   let threadCounter = 0;
@@ -155,41 +156,6 @@ function divideData(data) {
   return pessoasSeparadas;
 }
 
-async function end(pessoa) {
-  return Promise.all([
-    writeData(pessoa),
-    callEnd(pessoa),
-  ]);
-}
-
-async function setThread(data, threadNum, anoConsulta, savePDF) {
-  const threadResult = [];
-  for (let count = 0; count < data.length; count += 1) {
-    const pessoa = data[count];
-    console.log(`${threadNum})`, pessoa.nome, ' - Começou');
-    try {
-      const decStatus = await checkStatus(pessoa, anoConsulta, savePDF); // eslint-disable-line
-
-      console.log(`${threadNum})`, pessoa.nome, '-', `${anoConsulta} - ${decStatus}`);
-
-      const result = { ...pessoa, decStatus: `${anoConsulta} - ${decStatus}` };
-      await end(result); // eslint-disable-line
-      threadResult.push(result);
-    } catch (err) {
-      console.error(err);
-      console.log(`${threadNum})`, pessoa.nome, '-', `${anoConsulta} - Falha no Acesso`);
-      const result = { ...pessoa, decStatus: `${anoConsulta} - Falha no Acesso` };
-      await end(result); // eslint-disable-line
-      threadResult.push(result);
-    }
-  }
-  return threadResult;
-}
-
-async function startThreads(data, anoConsulta, savePDF) {
-  return Promise.all(data.map((d, i) => setThread(d, i, anoConsulta, savePDF)));
-}
-
 async function rfbAccessTime() {
   const init = new Date();
   const browser = await setBrowser();
@@ -202,17 +168,6 @@ async function rfbAccessTime() {
   return new Date() - init;
 }
 
-async function start(anoConsulta, savePDF) {
-  const { folder, threadsMax, dataPath } = readConfig();
-
-  process.setMaxListeners(threadsMax * 5);
-  checkFolder(folder);
-  const pessoas = await readData(dataPath);
-  const pessoasSeparadas = divideData(pessoas);
-
-  return startThreads(pessoasSeparadas, anoConsulta, savePDF);
-}
-
 async function loadChromium() {
   const browser = await setBrowser();
   finish(browser);
@@ -220,7 +175,6 @@ async function loadChromium() {
 
 module.exports = {
   checkStatus,
-  start,
   rfbAccessTime,
   loadChromium,
 };
