@@ -3,9 +3,6 @@ const chromium = require('chromium');
 const fs = require('fs');
 const isDev = require('electron-is-dev');
 
-const { writeData, readData } = require('../dataManager');
-const { callEnd } = require('../ipcService');
-
 const {
   ecacLoginUrl,
   irpfUrl,
@@ -123,37 +120,6 @@ async function checkStatus(contribInfos, anoConsulta, savePDF) {
     await finish(browser);
     throw err;
   }
-}
-
-function checkFolder(path) {
-  try {
-    fs.readdirSync(path);
-  } catch (err) {
-    if (err.errno === -4058) {
-      fs.mkdirSync(path);
-    }
-  }
-}
-
-async function divideData(data) {
-  const threadsMax = await Config.getConfig('threadsMax');
-  const pessoasSeparadas = [];
-
-  let threadCounter = 0;
-  for (let count = 0; count < data.length; count += 1) {
-    const pessoa = data[count];
-    if (!Array.isArray(pessoasSeparadas[threadCounter])) {
-      pessoasSeparadas[threadCounter] = [];
-    }
-
-    pessoasSeparadas[threadCounter].push(pessoa);
-
-    threadCounter += 1;
-
-    if (threadCounter >= threadsMax) threadCounter = 0;
-  }
-
-  return pessoasSeparadas;
 }
 
 async function rfbAccessTime() {
