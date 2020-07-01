@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 
@@ -44,24 +44,6 @@ function createWindow() {
   backgroundWindow.on('closed', () => {
     backgroundWindow = null;
   });
-
-  // reiniciar o processo!
-  ipcMain.on('readData', () => backgroundWindow.webContents.send('readData'));
-  ipcMain.on('dbData', (e, data) => mainWindow.webContents.send('dbData', data));
-
-  ipcMain.on('saveData', (e, data) => backgroundWindow.webContents.send('saveData', data));
-  ipcMain.on('saveEnd', () => mainWindow.webContents.send('saveEnd'));
-
-  ipcMain.on('startCheck', (e, data) => backgroundWindow.webContents.send('startCheck', data));
-  ipcMain.on('checkEnd', () => mainWindow.webContents.send('checkEnd'));
-
-  ipcMain.on('pessoaEnd', (e, data) => mainWindow.webContents.send('pessoaEnd', data));
-
-  ipcMain.on('accessTime', () => backgroundWindow.webContents.send('accessTime'));
-  ipcMain.on('timeReturn', (e, data) => mainWindow.webContents.send('timeReturn', data));
-
-  ipcMain.on('getConfig', () => backgroundWindow.webContents.send('getConfig'));
-  ipcMain.on('configReturn', (e, data) => mainWindow.webContents.send('configReturn', data));
 }
 
 app.on('ready', createWindow);

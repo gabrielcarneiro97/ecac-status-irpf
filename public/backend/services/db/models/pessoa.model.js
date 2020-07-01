@@ -4,6 +4,10 @@ const { db } = require('../connection.service');
 const Consulta = require('./consulta.model');
 
 class Pessoa extends Model {
+  static async cpf(cpf) {
+    return Pessoa.findByPk(cpf);
+  }
+
   static async criarAtualizar(cpf, nome, codigoAcesso, senha) {
     let pessoa = await Pessoa.findByPk(cpf);
 
@@ -22,6 +26,31 @@ class Pessoa extends Model {
     return pessoa.save();
   }
 
+  async atualizar({ nome, codigoAcesso, senha }) {
+    this.nome = nome || this.nome;
+    this.codigoAcesso = codigoAcesso || this.codigoAcesso;
+    this.senha = senha || this.senha;
+
+    return this.save();
+  }
+
+  async excluir() {
+    await Consulta.destroy({ where: { donoCpf: this.cpf } });
+    await Pessoa.destroy({ where: { cpf: this.cpf } });
+
+    return true;
+  }
+
+  async inserirConsulta(ano, status) {
+    const consulta = await Consulta.create({
+      donoCpf: this.cpf,
+      ano,
+      status,
+    });
+
+    return consulta;
+  }
+
   async ultimaConsulta() {
     return Consulta.findOne({
       where: { donoCpf: this.cpf },
@@ -36,14 +65,15 @@ class Pessoa extends Model {
     });
   }
 
-  async criarConsulta(ano, status) {
-    const consulta = await Consulta.create({
-      donoCpf: this.cpf,
-      ano,
-      status,
-    });
+  async todasConsultas() {
+    return Consulta.find({ where: { donoCpf: this.cpf }, order: [['dataHora', 'DESC']] });
+  }
 
-    return consulta;
+  async todasConsultasAno(ano) {
+    return Consulta.find({
+      where: { donoCpf: this.cpf, ano },
+      order: [['dataHora', 'DESC']],
+    });
   }
 }
 

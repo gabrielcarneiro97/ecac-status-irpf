@@ -1,6 +1,5 @@
 const puppeteer = require('puppeteer-core');
 const chromium = require('chromium');
-const fs = require('fs');
 const isDev = require('electron-is-dev');
 
 const {
@@ -14,7 +13,8 @@ const {
   irpfSelectors,
   decSelectors,
 } = require('./selectors.json');
-const Config = require('../db/models/config.model');
+
+const { folders } = require('../paths.service');
 
 const irpfDecUrl = (ano) => `${decUrl}/${ano}`;
 
@@ -86,7 +86,7 @@ async function gotoExtrato(page) {
 }
 
 async function saveExtratoToPDF(page, contribInfos, anoConsulta) {
-  const folder = await Config.getConfig('folder');
+  const folder = folders.extratos();
 
   await page.pdf({ path: `${folder}/${anoConsulta} - ${contribInfos.cpf} - ${contribInfos.nome}.pdf`, format: 'A4' });
 
