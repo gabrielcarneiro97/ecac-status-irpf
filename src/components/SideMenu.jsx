@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 import {
   Menu, MenuItem, MenuDivider,
@@ -6,11 +7,15 @@ import {
 
 
 function SideMenu() {
+  const history = useHistory();
+
+  const goto = (dest) => () => history.push(dest);
+
   return (
-    <Menu style={{ height: 511, marginTop: 5, marginLeft: 3 }}>
-      <MenuItem icon="search" text="Consulta" />
+    <Menu style={{ marginLeft: 3 }}>
+      <MenuItem icon="search" text="Consulta" onClick={goto('/')} />
       <MenuDivider />
-      <MenuItem icon="people" text="Pessoas" />
+      <MenuItem icon="people" text="Pessoas" onClick={goto('/pessoas')} />
     </Menu>
   );
 }
