@@ -32,7 +32,7 @@ type Query {
 }
 
 type Mutation {
-  excluirPessoa(cpf: String!): String!
+  excluirPessoa(cpf: String!): Boolean!
 
   salvarPessoa(pessoa: PessoaInput): Pessoa!
 }

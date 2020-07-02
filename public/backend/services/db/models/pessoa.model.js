@@ -4,7 +4,9 @@ const { db } = require('../connection.service');
 const Consulta = require('./consulta.model');
 
 class Pessoa extends Model {
-  static async criarAtualizar(cpf, nome, codigoAcesso, senha) {
+  static async criarAtualizar({
+    cpf, nome, codigoAcesso, senha,
+  }) {
     let pessoa = await Pessoa.findByPk(cpf);
 
     if (pessoa) {
