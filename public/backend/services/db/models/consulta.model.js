@@ -2,7 +2,11 @@ const { DataTypes, Model } = require('sequelize');
 const { db } = require('../connection.service');
 const Pessoa = require('./pessoa.model');
 
-class Consulta extends Model {}
+class Consulta extends Model {
+  static async porCpf(cpf) {
+    return Consulta.find({ where: { donoCpf: cpf }, order: [['dataHora', 'DESC']] });
+  }
+}
 
 Consulta.init({
   id: {

@@ -7,6 +7,7 @@ module.exports = {
   },
   extends: [
     'airbnb',
+    'plugin:node/recommended',
   ],
   parser: 'babel-eslint',
   globals: {

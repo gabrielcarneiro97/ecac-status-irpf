@@ -12,7 +12,7 @@ function SideMenu() {
   const goto = (dest) => () => history.push(dest);
 
   return (
-    <Menu style={{ marginLeft: 3 }}>
+    <Menu style={{ marginLeft: 3, marginTop: 10 }}>
       <MenuItem icon="search" text="Consulta" onClick={goto('/')} />
       <MenuDivider />
       <MenuItem icon="people" text="Pessoas" onClick={goto('/pessoas')} />

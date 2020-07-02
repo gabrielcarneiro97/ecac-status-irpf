@@ -4,10 +4,6 @@ const { db } = require('../connection.service');
 const Consulta = require('./consulta.model');
 
 class Pessoa extends Model {
-  static async cpf(cpf) {
-    return Pessoa.findByPk(cpf);
-  }
-
   static async criarAtualizar(cpf, nome, codigoAcesso, senha) {
     let pessoa = await Pessoa.findByPk(cpf);
 
@@ -66,7 +62,7 @@ class Pessoa extends Model {
   }
 
   async todasConsultas() {
-    return Consulta.find({ where: { donoCpf: this.cpf }, order: [['dataHora', 'DESC']] });
+    return Consulta.porCpf(this.cpf);
   }
 
   async todasConsultasAno(ano) {

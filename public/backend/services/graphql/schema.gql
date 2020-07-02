@@ -1,0 +1,38 @@
+scalar Date
+
+type Consulta {
+  id: Int!
+  donoCpf: String!
+  ano: Int
+  status: String
+  dataHora: Date
+}
+
+type Pessoa {
+  cpf: String!
+  nome: String!
+  codigoAcesso: String
+  senha: String
+
+  consultas: [Consulta]!
+}
+
+input PessoaInput {
+  cpf: String!
+  nome: String!
+  codigoAcesso: String
+  senha: String
+}
+
+
+type Query {
+  consultas(cpf: String!): [Consulta!]!
+
+  pessoa(cpf: String!): Pessoa!
+}
+
+type Mutation {
+  excluirPessoa(cpf: String!): String!
+
+  salvarPessoa(pessoa: PessoaInput): Pessoa!
+}
