@@ -140,6 +140,11 @@ async function loadChromium() {
   finish(browser);
 }
 
+// checkStatus(
+//   { cpf: '35505931634', codigoAcesso: '949690420524', senha: 'Aa231185' },
+//   2020,
+// ).then(console.log);
+
 module.exports = {
   checkStatus,
   rfbAccessTime,
