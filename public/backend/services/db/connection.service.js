@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+const sqlite3 = require('sqlite3');
 
 const { files } = require('../paths.service');
 
@@ -9,6 +10,7 @@ function db() {
 
   seql = new Sequelize({
     dialect: 'sqlite',
+    dialectModule: sqlite3,
     storage: files.db(),
   });
 

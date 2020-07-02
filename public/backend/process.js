@@ -1,16 +1,10 @@
-const { ipcRenderer } = require('electron');
+const server = require('./services/graphql/server');
+const { loadChromium } = require('./services/puppeteer');
+const { init } = require('./services/db/db.service');
 
-const { rfbAccessTime, loadChromium } = require('./services/puppeteer');
-const Config = require('./services/db/models/config.model');
 
 loadChromium();
 
-ipcRenderer.on('accessTime', async () => {
-  const time = await rfbAccessTime();
+init();
 
-  ipcRenderer.send('timeReturn', { time });
-});
-
-ipcRenderer.on('getConfig', async () => {
-  ipcRenderer.send('configReturn', { config: await Config.all() });
-});
+server.start(() => console.log('Server is running on localhost:4000'));

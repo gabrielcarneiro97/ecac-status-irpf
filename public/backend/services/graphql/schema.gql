@@ -28,11 +28,11 @@ input PessoaInput {
 type Query {
   consultas(cpf: String!): [Consulta!]!
 
-  pessoa(cpf: String!): Pessoa!
+  pessoa(cpf: String!): Pessoa
 }
 
 type Mutation {
-  excluirPessoa(cpf: String!): Boolean!
+  excluirPessoa(cpf: String!): String!
 
   salvarPessoa(pessoa: PessoaInput): Pessoa!
 }

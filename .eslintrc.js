@@ -7,7 +7,6 @@ module.exports = {
   },
   extends: [
     'airbnb',
-    'plugin:node/recommended',
   ],
   parser: 'babel-eslint',
   globals: {
@@ -18,6 +17,7 @@ module.exports = {
     ecmaFeatures: {
       jsx: true,
     },
+    sourceType: 'module',
     ecmaVersion: 2018,
   },
   plugins: [
