@@ -17,10 +17,10 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import SideMenu from './components/SideMenu';
 import ConsultaPage from './components/ConsultaPage';
+import PessoasPage from './components/PessoasPage';
 
 moment.locale('pt-br');
 
-const Pessoas = () => <div>Pessoas</div>;
 
 function App() {
   return (
@@ -44,7 +44,7 @@ function App() {
           </Col>
           <Col style={{ padding: 0, margin: 20 }}>
             <Switch>
-              <Route exact path="/pessoas" component={Pessoas} />
+              <Route exact path="/pessoas" component={PessoasPage} />
               <Route path="/" component={ConsultaPage} />
             </Switch>
           </Col>
