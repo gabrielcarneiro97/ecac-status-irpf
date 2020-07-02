@@ -20,12 +20,13 @@ const irpfDecUrl = (ano) => `${decUrl}/${ano}`;
 
 async function setBrowser() {
   const chromiumPath = isDev ? chromium.path : chromium.path.replace('app.asar', 'app.asar.unpacked');
-  return puppeteer.launch({ headless: true, executablePath: chromiumPath });
+  return puppeteer.launch({ headless: true, executablePath: chromiumPath, timeout: 0 });
 }
 
 async function setPage(browser) {
   const page = await browser.newPage();
   await page.setViewport({ width: 1366, height: 768 });
+  await page.setDefaultNavigationTimeout(0);
   return page;
 }
 

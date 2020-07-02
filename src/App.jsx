@@ -16,12 +16,11 @@ import 'moment/locale/pt-br';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import SideMenu from './components/SideMenu';
+import ConsultaPage from './components/ConsultaPage';
 
 moment.locale('pt-br');
 
-const Main = () => <div>Main</div>;
 const Pessoas = () => <div>Pessoas</div>;
-
 
 function App() {
   return (
@@ -43,10 +42,10 @@ function App() {
           <Col xs={2} style={{ padding: 0, marginRight: 15 }}>
             <SideMenu />
           </Col>
-          <Col style={{ padding: 0 }}>
+          <Col style={{ padding: 0, margin: 20 }}>
             <Switch>
               <Route exact path="/pessoas" component={Pessoas} />
-              <Route path="/" component={Main} />
+              <Route path="/" component={ConsultaPage} />
             </Switch>
           </Col>
         </Row>
