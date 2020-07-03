@@ -5,6 +5,7 @@ const worker = require('../../puppeteer/worker');
 
 module.exports = {
   pessoa: async (_, { cpf }) => (await Pessoa.findByPk(cpf))?.toJSON() || null,
+  pessoas: async () => (await Pessoa.findAll({ order: [['nome', 'ASC']] })).map((c) => c.toJSON()),
   consultas: async (_, { cpf }) => (await Consulta.porCpf(cpf)).map((c) => c.toJSON()),
   consultaUnica: async (_, { pessoa, ano, pdf }) => {
     if (worker.isBusy()) return false;

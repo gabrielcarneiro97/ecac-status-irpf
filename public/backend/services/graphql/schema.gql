@@ -30,6 +30,8 @@ type Query {
 
   pessoa(cpf: String!): Pessoa
 
+  pessoas: [Pessoa!]!
+
   consultaUnica(pessoa: PessoaInput!, ano: String!, pdf: Boolean): Boolean!
 }
 

@@ -15,7 +15,7 @@ function sanitizar(str) {
 }
 
 function ConsultaIndividualForm() {
-  const [cpf, setCpf] = useState('09392070608');
+  const [cpf, setCpf] = useState('');
   const [cpfIntent, setCpfIntent] = useState(Intent.NONE);
   const [cpfIsValid, setCpfIsValid] = useState(false);
 
@@ -31,7 +31,7 @@ function ConsultaIndividualForm() {
     if (cpf === '') setCpfIsValid(false);
   }, [cpf]);
 
-  const [nome, setNome] = useState('Gabriel Carneiro de Castro');
+  const [nome, setNome] = useState('');
   const [nomeIsValid, setNomeIsValid] = useState(false);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ function ConsultaIndividualForm() {
     else setNomeIsValid(false);
   }, [nome]);
 
-  const [codigoAcesso, setCodigoAcesso] = useState('293519285811');
+  const [codigoAcesso, setCodigoAcesso] = useState('');
   const [codigoAcessoIsValid, setCodigoAcessoIsValid] = useState(false);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ function ConsultaIndividualForm() {
     else setCodigoAcessoIsValid(false);
   }, [codigoAcesso]);
 
-  const [senha, setSenha] = useState('Aa231185');
+  const [senha, setSenha] = useState('');
   const [senhaIsValid, setSenhaIsValid] = useState(false);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ function ConsultaIndividualForm() {
     else setSenhaIsValid(false);
   }, [senha]);
 
-  const [ano, setAno] = useState(2020);
+  const [ano, setAno] = useState('2020');
 
   const [liberado, setLiberado] = useState(false);
 
@@ -68,33 +68,29 @@ function ConsultaIndividualForm() {
   const [pessoa, setPessoa] = useState(null);
 
   const CONSULTA_QUERY = gql`
-  query consultaUnica($pessoa: PessoaInput!, $ano: String!) {
-    consultaUnica(pessoa: $pessoa, ano: $ano)
-  }
-`;
+    query consultaUnica($pessoa: PessoaInput!, $ano: String!) {
+      consultaUnica(pessoa: $pessoa, ano: $ano)
+    }
+  `;
 
   const [consultar, { loading, data }] = useLazyQuery(CONSULTA_QUERY);
 
   useEffect(() => {
-    if (!pessoa) return;
-
-    consultar({ variables: { pessoa, ano: ano.toString() } });
+    if (pessoa) consultar({ variables: { pessoa, ano } });
   }, [pessoa]);
 
   useEffect(() => {
     if (data?.consultaUnica === false) {
-      return AppToaster.show({
+      AppToaster.show({
         message: 'Já existe uma consulta em execução, tente novamente mais tarde.',
       });
     }
 
     if (data?.consultaUnica === true) {
-      return AppToaster.show({
+      AppToaster.show({
         message: 'Consulta iniciada.',
       });
     }
-
-    return true;
   }, [loading, data]);
 
   const consultaIndividual = () => {
@@ -174,7 +170,7 @@ function ConsultaIndividualForm() {
           >
             <HTMLSelect
               value={ano}
-              options={[2017, 2018, 2019, 2020]}
+              options={['2017', '2018', '2019', '2020']}
               onChange={handleInputChange(setAno)}
               id="ano-select"
             />
