@@ -2,8 +2,8 @@ const server = require('./services/graphql/server');
 const { loadChromium } = require('./services/puppeteer');
 const { init } = require('./services/db/db.service');
 
-init().then(loadChromium).then(server.start);
+init();
 
-// loadChromium();
+loadChromium();
 
-// server.start(() => console.log('Server is running on localhost:4000'));
+server.start(() => console.log('Server is running on localhost:4000'));

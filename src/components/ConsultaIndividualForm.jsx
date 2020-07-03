@@ -4,9 +4,18 @@ import {
 } from '@blueprintjs/core';
 import { Container, Row, Col } from 'react-grid-system';
 import { validate } from 'gerador-validador-cpf';
+import gql from 'graphql-tag';
+
+import { useLazyQuery } from '@apollo/react-hooks';
+
+import AppToaster from '../services/toaster';
+
+function sanitizar(str) {
+  return str.replace(/\./g, '').replace(/\.-/g, '');
+}
 
 function ConsultaIndividualForm() {
-  const [cpf, setCpf] = useState('');
+  const [cpf, setCpf] = useState('09392070608');
   const [cpfIntent, setCpfIntent] = useState(Intent.NONE);
   const [cpfIsValid, setCpfIsValid] = useState(false);
 
@@ -22,7 +31,7 @@ function ConsultaIndividualForm() {
     if (cpf === '') setCpfIsValid(false);
   }, [cpf]);
 
-  const [nome, setNome] = useState('');
+  const [nome, setNome] = useState('Gabriel Carneiro de Castro');
   const [nomeIsValid, setNomeIsValid] = useState(false);
 
   useEffect(() => {
@@ -30,7 +39,7 @@ function ConsultaIndividualForm() {
     else setNomeIsValid(false);
   }, [nome]);
 
-  const [codigoAcesso, setCodigoAcesso] = useState('');
+  const [codigoAcesso, setCodigoAcesso] = useState('293519285811');
   const [codigoAcessoIsValid, setCodigoAcessoIsValid] = useState(false);
 
   useEffect(() => {
@@ -38,7 +47,7 @@ function ConsultaIndividualForm() {
     else setCodigoAcessoIsValid(false);
   }, [codigoAcesso]);
 
-  const [senha, setSenha] = useState('');
+  const [senha, setSenha] = useState('Aa231185');
   const [senhaIsValid, setSenhaIsValid] = useState(false);
 
   useEffect(() => {
@@ -56,8 +65,45 @@ function ConsultaIndividualForm() {
 
   const handleInputChange = (setter) => (e) => setter(e.target?.value || e.currentTarget.value);
 
+  const [pessoa, setPessoa] = useState(null);
+
+  const CONSULTA_QUERY = gql`
+  query consultaUnica($pessoa: PessoaInput!, $ano: String!) {
+    consultaUnica(pessoa: $pessoa, ano: $ano)
+  }
+`;
+
+  const [consultar, { loading, data }] = useLazyQuery(CONSULTA_QUERY);
+
+  useEffect(() => {
+    if (!pessoa) return;
+
+    consultar({ variables: { pessoa, ano: ano.toString() } });
+  }, [pessoa]);
+
+  useEffect(() => {
+    if (data?.consultaUnica === false) {
+      return AppToaster.show({
+        message: 'Já existe uma consulta em execução, tente novamente mais tarde.',
+      });
+    }
+
+    if (data?.consultaUnica === true) {
+      return AppToaster.show({
+        message: 'Consulta iniciada.',
+      });
+    }
+
+    return true;
+  }, [loading, data]);
+
   const consultaIndividual = () => {
-    console.log(nome, cpf, codigoAcesso, senha, ano);
+    setPessoa({
+      nome,
+      cpf: sanitizar(cpf),
+      codigoAcesso: sanitizar(codigoAcesso),
+      senha,
+    });
   };
 
   return (

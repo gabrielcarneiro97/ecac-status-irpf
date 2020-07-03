@@ -1,10 +1,24 @@
 const { DataTypes, Model } = require('sequelize');
 const { db } = require('../connection.service');
-const Pessoa = require('./pessoa.model');
 
 class Consulta extends Model {
   static async porCpf(cpf) {
-    return Consulta.find({ where: { donoCpf: cpf }, order: [['dataHora', 'DESC']] });
+    return Consulta.findAll({ where: { pessoaCpf: cpf }, order: [['dataHora', 'DESC']] });
+  }
+
+  static async criarConsulta(ano, status, cpf) {
+    return Consulta.create({
+      pessoaCpf: cpf,
+      ano,
+      status,
+    });
+  }
+
+  static async ultimaConsulta(cpf) {
+    Consulta.findOne({
+      where: { pessoaCpf: cpf },
+      order: [['dataHora', 'DESC']],
+    });
   }
 }
 
@@ -14,13 +28,7 @@ Consulta.init({
     primaryKey: true,
     autoIncrement: true,
   },
-  donoCpf: {
-    type: DataTypes.STRING,
-    references: {
-      model: Pessoa,
-      key: 'cpf',
-    },
-  },
+  pessoaCpf: DataTypes.STRING,
   ano: DataTypes.INTEGER,
   status: DataTypes.STRING,
   dataHora: {
@@ -30,6 +38,7 @@ Consulta.init({
 }, {
   sequelize: db(),
   tableName: 'tb_consulta',
+  modelName: 'consulta',
 });
 
 module.exports = Consulta;

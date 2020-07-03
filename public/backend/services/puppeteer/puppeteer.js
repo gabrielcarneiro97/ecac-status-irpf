@@ -113,7 +113,7 @@ async function consultaPorCodigoAcesso(pessoa, ano, savePDF) {
 
     await finish(browser);
 
-    return { status, ano, donoCpf: pessoa.cpf };
+    return { status, ano, pessoaCpf: pessoa.cpf };
   } catch (err) {
     await finish(browser);
     throw err;

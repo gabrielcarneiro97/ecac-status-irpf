@@ -44,6 +44,7 @@ Config.init({
 }, {
   sequelize: db(),
   tableName: 'tb_config',
+  modelName: 'config',
 });
 
 module.exports = Config;

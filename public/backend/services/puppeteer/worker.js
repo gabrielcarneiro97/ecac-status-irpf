@@ -2,6 +2,10 @@ const { consultaPorCodigoAcesso } = require('./puppeteer');
 
 let busy = false;
 
+function isBusy() {
+  return busy;
+}
+
 async function consultaUnica(pessoa, ano, pdf) {
   if (busy) {
     return { busy };
@@ -16,4 +20,5 @@ async function consultaUnica(pessoa, ano, pdf) {
 
 module.exports = {
   consultaUnica,
+  isBusy,
 };

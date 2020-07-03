@@ -1,4 +1,4 @@
-const Config = require('./models/config.model');
+const { Config } = require('./models');
 
 const { db } = require('./connection.service');
 

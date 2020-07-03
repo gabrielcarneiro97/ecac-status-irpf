@@ -2,7 +2,7 @@ scalar Date
 
 type Consulta {
   id: Int!
-  donoCpf: String!
+  pessoaCpf: String!
   ano: Int
   status: String
   dataHora: Date
@@ -29,6 +29,8 @@ type Query {
   consultas(cpf: String!): [Consulta!]!
 
   pessoa(cpf: String!): Pessoa
+
+  consultaUnica(pessoa: PessoaInput!, ano: String!, pdf: Boolean): Boolean!
 }
 
 type Mutation {

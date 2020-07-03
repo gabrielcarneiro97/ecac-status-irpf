@@ -7,7 +7,7 @@ class Pessoa extends Model {
   static async criarAtualizar({
     cpf, nome, codigoAcesso, senha,
   }) {
-    let pessoa = await Pessoa.findByPk(cpf);
+    const pessoa = await Pessoa.findByPk(cpf);
 
     if (pessoa) {
       pessoa.nome = nome;
@@ -17,11 +17,9 @@ class Pessoa extends Model {
       return pessoa.save();
     }
 
-    pessoa = await Pessoa.create({
+    return Pessoa.create({
       cpf, nome, codigoAcesso, senha,
     });
-
-    return pessoa.save();
   }
 
   async atualizar({ nome, codigoAcesso, senha }) {
@@ -33,7 +31,7 @@ class Pessoa extends Model {
   }
 
   async excluir() {
-    await Consulta.destroy({ where: { donoCpf: this.cpf } });
+    await Consulta.destroy({ where: { pessoaCpf: this.cpf } });
     await Pessoa.destroy({ where: { cpf: this.cpf } });
 
     return true;
@@ -41,7 +39,7 @@ class Pessoa extends Model {
 
   async inserirConsulta(ano, status) {
     const consulta = await Consulta.create({
-      donoCpf: this.cpf,
+      pessoaCpf: this.cpf,
       ano,
       status,
     });
@@ -51,14 +49,14 @@ class Pessoa extends Model {
 
   async ultimaConsulta() {
     return Consulta.findOne({
-      where: { donoCpf: this.cpf },
+      where: { pessoaCpf: this.cpf },
       order: [['dataHora', 'DESC']],
     });
   }
 
   async ultimaConsultaAno(ano) {
     return Consulta.findOne({
-      where: { donoCpf: this.cpf, ano },
+      where: { pessoaCpf: this.cpf, ano },
       order: [['dataHora', 'DESC']],
     });
   }
@@ -69,7 +67,7 @@ class Pessoa extends Model {
 
   async todasConsultasAno(ano) {
     return Consulta.find({
-      where: { donoCpf: this.cpf, ano },
+      where: { pessoaCpf: this.cpf, ano },
       order: [['dataHora', 'DESC']],
     });
   }
@@ -86,6 +84,10 @@ Pessoa.init({
 }, {
   sequelize: db(),
   tableName: 'tb_pessoa',
+  modelName: 'pessoa',
 });
+
+Pessoa.hasMany(Consulta);
+Consulta.belongsTo(Pessoa);
 
 module.exports = Pessoa;

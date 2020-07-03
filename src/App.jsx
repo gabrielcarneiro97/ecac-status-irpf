@@ -5,7 +5,10 @@ import { Container, Row, Col } from 'react-grid-system';
 
 import { Colors } from '@blueprintjs/core';
 
-import ApolloClient, { InMemoryCache } from 'apollo-boost';
+import { ApolloClient } from 'apollo-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { HttpLink } from 'apollo-link-http';
+
 import { ApolloProvider } from '@apollo/react-hooks';
 
 import moment from 'moment';
@@ -26,7 +29,9 @@ moment.locale('pt-br');
 
 const client = new ApolloClient({
   cache: new InMemoryCache({ addTypename: false }),
-  uri: 'http://localhost:4000',
+  link: new HttpLink({
+    uri: 'http://localhost:4000',
+  }),
   defaultOptions: {
     watchQuery: {
       fetchPolicy: 'no-cache',
