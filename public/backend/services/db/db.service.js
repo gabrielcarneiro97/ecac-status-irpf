@@ -13,6 +13,8 @@ async function init() {
       { nome: 'threadsMax', valor: '10' },
     ]);
   }
+
+  return true;
 }
 
 module.exports = {

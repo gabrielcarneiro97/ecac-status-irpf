@@ -2,8 +2,13 @@ const server = require('./services/graphql/server');
 const { loadChromium } = require('./services/puppeteer');
 const { init } = require('./services/db/db.service');
 
-init();
+const { ready } = require('./backend.status');
 
-loadChromium();
+server.start(async () => {
+  console.log('Server is running on localhost:4000');
+  await init();
 
-server.start(() => console.log('Server is running on localhost:4000'));
+  await loadChromium();
+
+  ready();
+});

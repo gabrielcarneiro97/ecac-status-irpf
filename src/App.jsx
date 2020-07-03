@@ -5,10 +5,6 @@ import { Container, Row, Col } from 'react-grid-system';
 
 import { Colors } from '@blueprintjs/core';
 
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
-
 import { ApolloProvider } from '@apollo/react-hooks';
 
 import moment from 'moment';
@@ -25,28 +21,9 @@ import SideMenu from './components/SideMenu';
 import ConsultaPage from './components/ConsultaPage';
 import PessoasPage from './components/PessoasPage';
 
-moment.locale('pt-br');
+import client from './services/gql.service';
 
-const client = new ApolloClient({
-  cache: new InMemoryCache({ addTypename: false }),
-  link: new HttpLink({
-    uri: 'http://localhost:4000',
-  }),
-  defaultOptions: {
-    watchQuery: {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'ignore',
-    },
-    query: {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    },
-    mutate: {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'ignore',
-    },
-  },
-});
+moment.locale('pt-br');
 
 function App() {
   return (

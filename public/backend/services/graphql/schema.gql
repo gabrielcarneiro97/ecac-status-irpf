@@ -40,3 +40,7 @@ type Mutation {
 
   salvarPessoa(pessoa: PessoaInput): Pessoa!
 }
+
+type Subscription {
+  backendIsReady: Boolean!
+}
