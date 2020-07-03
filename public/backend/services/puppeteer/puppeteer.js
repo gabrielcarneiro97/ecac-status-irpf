@@ -31,7 +31,7 @@ async function setPage(browser) {
 }
 
 async function executeLogin(page, contribInfos) {
-  await page.goto(ecacLoginUrl, { waitUntil: 'networkidle0' });
+  await page.goto(ecacLoginUrl, { waitUntil: 'networkidle2' });
 
   await page.evaluate((selectors, contrib) => {
     const extractLogin = () => ({
@@ -63,24 +63,21 @@ async function gotoIRPF(page, anoConsulta) {
     }
   }, irpfSelectors);
 
-  await page.goto(irpfDecUrl(anoConsulta), { waitUntil: 'networkidle0' });
+  await page.goto(irpfDecUrl(anoConsulta), { waitUntil: 'networkidle2' });
 
   return true;
 }
 
 async function getStatus(page) {
   return page.evaluate(
-    ({ table }) => document.querySelector(table).children[1].children[5].innerText,
+    ({ table }) => document.querySelector(table).children[2].children[5].innerText,
     decSelectors,
   );
 }
 
 async function gotoExtrato(page) {
-  await page.evaluate(
-    ({ extratoLink }) => document.querySelector(extratoLink).click(),
-    decSelectors,
-  );
-
+  const [link] = await page.$x("//a[contains(., 'Extrato do Processamento')]");
+  await link.click();
   await page.waitForSelector('.notLoading');
 
   return true;
@@ -98,25 +95,25 @@ async function finish(browser) {
   return browser.close();
 }
 
-async function checkStatus(contribInfos, anoConsulta, savePDF) {
+async function consultaPorCodigoAcesso(pessoa, ano, savePDF) {
   const browser = await setBrowser();
   try {
     const page = await setPage(browser);
 
-    await executeLogin(page, contribInfos);
+    await executeLogin(page, pessoa);
 
-    await gotoIRPF(page, anoConsulta);
+    await gotoIRPF(page, ano);
 
-    const decStatus = await getStatus(page);
+    const status = await getStatus(page);
 
     if (savePDF) {
       await gotoExtrato(page);
-      await saveExtratoToPDF(page, contribInfos, anoConsulta);
+      await saveExtratoToPDF(page, pessoa, ano);
     }
 
     await finish(browser);
 
-    return decStatus;
+    return { status, ano, donoCpf: pessoa.cpf };
   } catch (err) {
     await finish(browser);
     throw err;
@@ -140,13 +137,8 @@ async function loadChromium() {
   finish(browser);
 }
 
-// checkStatus(
-//   { cpf: '35505931634', codigoAcesso: '949690420524', senha: 'Aa231185' },
-//   2020,
-// ).then(console.log);
-
 module.exports = {
-  checkStatus,
+  consultaPorCodigoAcesso,
   rfbAccessTime,
   loadChromium,
 };

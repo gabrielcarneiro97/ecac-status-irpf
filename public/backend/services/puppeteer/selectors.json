@@ -10,7 +10,7 @@
     "fecharJanelaAjuda": ".campo_sele_help > .btClos.glyphicon.glyphicon-remove"
   },
   "decSelectors": {
-    "table": "eir-declaracoes > table > tbody",
+    "table": "eir-declaracoes > table",
     "extratoLink": "eir-declaracoes > table > tbody > tr > td > div > ul > li > a"
   }
 }

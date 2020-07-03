@@ -8,27 +8,6 @@ import moment from 'moment';
 
 import { HTMLTable, Classes } from '@blueprintjs/core';
 
-const moc = [
-  {
-    id: 1,
-    ano: '2020',
-    dataHora: +new Date(),
-    status: 'Falha no Acesso',
-  },
-  {
-    id: 2,
-    ano: '2020',
-    dataHora: +new Date(),
-    status: 'Processada',
-  },
-  {
-    id: 3,
-    ano: '2020',
-    dataHora: +new Date(),
-    status: 'Malha Fina',
-  },
-];
-
 function PessoaCardTable(props) {
   const { cpf } = props;
 
