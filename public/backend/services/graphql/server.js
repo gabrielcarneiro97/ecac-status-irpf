@@ -1,4 +1,4 @@
-const { GraphQLServer, PubSub } = require('graphql-yoga');
+const { ApolloServer } = require('apollo-server');
 const path = require('path');
 const fs = require('fs');
 
@@ -6,7 +6,19 @@ const resolvers = require('./resolvers');
 
 const typeDefs = fs.readFileSync(path.join(__dirname, 'schema.gql'), 'utf8');
 
-const pubsub = new PubSub();
-const server = new GraphQLServer({ typeDefs, resolvers, context: { pubsub } });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: async ({ req, connection }) => {
+    if (connection) {
+      // check connection for metadata
+      return connection.context;
+    }
+    // check from req
+    const token = req.headers.authorization || '';
+
+    return { token };
+  },
+});
 
 module.exports = server;

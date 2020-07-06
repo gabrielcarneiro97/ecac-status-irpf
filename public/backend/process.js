@@ -4,8 +4,10 @@ const { init } = require('./services/db/db.service');
 
 const { ready } = require('./backend.status');
 
-server.start(async () => {
-  console.log('Server is running on localhost:4000');
+server.listen().then(async ({ url, subscriptionsUrl }) => {
+  console.log(`🚀  Server ready at ${url}`);
+  console.log(`🚀 Subscriptions ready at ${subscriptionsUrl}`);
+
   await init();
 
   await loadChromium();
