@@ -1,3 +1,5 @@
+const pubsup = require('../graphql/pubsub');
+
 const { consultaPorCodigoAcesso } = require('./puppeteer');
 
 let busy = false;
@@ -17,6 +19,8 @@ async function consultaUnica(pessoa, ano, pdf) {
 
   return consulta;
 }
+
+setInterval(() => pubsup.publish('PUP_STATUS', { isPupBusy: isBusy() }), 1000);
 
 module.exports = {
   consultaUnica,

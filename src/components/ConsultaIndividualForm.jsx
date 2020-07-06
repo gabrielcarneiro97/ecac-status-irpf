@@ -9,10 +9,7 @@ import gql from 'graphql-tag';
 import { useLazyQuery } from '@apollo/react-hooks';
 
 import AppToaster from '../services/toaster';
-
-function sanitizar(str) {
-  return str.replace(/\./g, '').replace(/\.-/g, '');
-}
+import { sanitizar } from '../services/ajustes.service';
 
 function ConsultaIndividualForm() {
   const [cpf, setCpf] = useState('');

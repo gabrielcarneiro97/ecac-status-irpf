@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-grid-system';
 
 import ConsultaIndividualForm from './ConsultaIndividualForm';
 import PageDivider from './PageDivider';
+import ConsultaCSV from './ConsultaCSV';
 
 function ConsultaPage() {
   return (
@@ -13,6 +14,11 @@ function ConsultaPage() {
         </Col>
       </Row>
       <PageDivider />
+      <Row>
+        <Col>
+          <ConsultaCSV />
+        </Col>
+      </Row>
     </Container>
   );
 }

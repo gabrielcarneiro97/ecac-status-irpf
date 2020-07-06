@@ -1,23 +1,12 @@
-const { PubSub } = require('apollo-server');
+const pubsub = require('../pubsub');
 
-const { isReady } = require('../../../backend.status');
-
-const channelId = () => Math.random().toString(36).substring(2, 15);
-
-const pubsub = new PubSub();
+// const channelId = () => Math.random().toString(36).substring(2, 15);
 
 module.exports = {
-  backendIsReady: {
-    subscribe: () => {
-      const channel = channelId();
-
-      const interval = setInterval(() => {
-        pubsub.publish(channel, { backendIsReady: isReady() });
-
-        if (isReady()) clearInterval(interval);
-      }, 1000);
-
-      return pubsub.asyncIterator(channel);
-    },
+  isBackReady: {
+    subscribe: () => pubsub.asyncIterator('SERVER_STATUS'),
+  },
+  isPupBusy: {
+    subscribe: () => pubsub.asyncIterator('PUP_STATUS'),
   },
 };

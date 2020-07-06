@@ -5,7 +5,6 @@ import {
   Menu, MenuItem, MenuDivider,
 } from '@blueprintjs/core';
 
-
 function SideMenu() {
   const history = useHistory();
 

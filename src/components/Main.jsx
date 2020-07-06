@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import gql from 'graphql-tag';
-import { useSubscription } from '@apollo/react-hooks';
+import { useApolloClient } from '@apollo/react-hooks';
 
 import { Container, Row, Col } from 'react-grid-system';
 
@@ -17,20 +17,32 @@ import PessoasPage from './PessoasPage';
 function App() {
   const QUERY = gql`
       subscription {
-      backendIsReady
+        isBackReady
     }
   `;
 
-  const { data, loading } = useSubscription(QUERY);
+  const client = useApolloClient();
 
-  const [waiting, setWaiting] = useState(true);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [subscription, setSubscription] = useState(null);
+
+  useEffect(() => {
+    const observer = client.subscribe({ query: QUERY });
+
+    setSubscription(
+      observer.subscribe(({ data: d }) => setData(d)),
+    );
+  }, []);
 
   useEffect(() => {
     if (data) {
-      const { backendIsReady } = data;
-      setWaiting(!backendIsReady || loading);
+      const { isBackReady } = data;
+      setLoading(!isBackReady);
+
+      if (isBackReady) subscription.unsubscribe();
     }
-  }, [data, loading]);
+  }, [data]);
 
   return (
     <Container
@@ -46,12 +58,12 @@ function App() {
           <Header />
         </Col>
       </Row>
-      <Row style={{ height: 521, display: waiting ? 'inherit' : 'none', paddingTop: 30 }}>
+      <Row style={{ height: 521, display: loading ? 'flex' : 'none', paddingTop: 30 }}>
         <Col>
           <Spinner size={Spinner.SIZE_LARGE} />
         </Col>
       </Row>
-      <Row style={{ height: 521, display: waiting ? 'none' : 'flex' }}>
+      <Row style={{ height: 521, display: loading ? 'none' : 'flex' }}>
         <Col xs={2} style={{ padding: 0, marginRight: 15 }}>
           <SideMenu />
         </Col>

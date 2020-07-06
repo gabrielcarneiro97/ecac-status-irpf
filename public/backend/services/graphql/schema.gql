@@ -42,5 +42,6 @@ type Mutation {
 }
 
 type Subscription {
-  backendIsReady: Boolean!
+  isBackReady: Boolean!
+  isPupBusy: Boolean!
 }
