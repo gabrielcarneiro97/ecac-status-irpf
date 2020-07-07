@@ -3,23 +3,27 @@ import { Container, Row, Col } from 'react-grid-system';
 
 import ConsultaIndividualForm from './ConsultaIndividualForm';
 import PageDivider from './PageDivider';
-import ConsultaCSV from './ConsultaCSV';
+import ConsultaXLS from './ConsultaXLS';
+import ConsultaStatus from './ConsultaStatus';
 
 function ConsultaPage() {
   return (
-    <Container fluid>
-      <Row>
-        <Col>
-          <ConsultaIndividualForm />
-        </Col>
-      </Row>
-      <PageDivider />
-      <Row>
-        <Col>
-          <ConsultaCSV />
-        </Col>
-      </Row>
-    </Container>
+    <>
+      <ConsultaStatus />
+      <Container fluid>
+        <Row>
+          <Col>
+            <ConsultaIndividualForm />
+          </Col>
+        </Row>
+        <PageDivider />
+        <Row>
+          <Col>
+            <ConsultaXLS />
+          </Col>
+        </Row>
+      </Container>
+    </>
   );
 }
 

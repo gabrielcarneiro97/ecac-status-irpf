@@ -2,6 +2,14 @@ import XLSX from 'xlsx';
 
 import { sanitizar } from './ajustes.service';
 
+export function planilhaModelo() {
+  const wb = XLSX.utils.book_new();
+  const sheet = XLSX.utils.aoa_to_sheet([['nome', 'cpf', 'codigoAcesso', 'senha', 'ano']]);
+  XLSX.utils.book_append_sheet(wb, sheet, 'Plan1');
+
+  return wb;
+}
+
 export function objsToXlsx(objs) {
   const sheet = XLSX.utils.json_to_sheet(objs);
   const wb = XLSX.utils.book_new();

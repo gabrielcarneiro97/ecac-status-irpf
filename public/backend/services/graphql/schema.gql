@@ -12,9 +12,15 @@ type Pessoa {
   cpf: String!
   nome: String!
   codigoAcesso: String
+  codigoAcessoValidade: Date
   senha: String
 
   consultas: [Consulta]!
+}
+
+type WorkerStatus {
+  isBusy: Boolean!
+  progress: Float!
 }
 
 input PessoaInput {
@@ -22,6 +28,11 @@ input PessoaInput {
   nome: String!
   codigoAcesso: String
   senha: String
+}
+
+input ConsultaInput {
+  pessoa: PessoaInput!
+  ano: String
 }
 
 
@@ -32,7 +43,10 @@ type Query {
 
   pessoas: [Pessoa!]!
 
-  consultaUnica(pessoa: PessoaInput!, ano: String!, pdf: Boolean): Boolean!
+  consultaUnica(consulta: ConsultaInput!, pdf: Boolean): Boolean!
+  consultaMultipla(consultas: [ConsultaInput!]!, pdf: Boolean): Boolean!
+
+  workerStatus: WorkerStatus!
 }
 
 type Mutation {
@@ -44,4 +58,6 @@ type Mutation {
 type Subscription {
   isBackReady: Boolean!
   isPupBusy: Boolean!
+
+  workerStatus: WorkerStatus!
 }

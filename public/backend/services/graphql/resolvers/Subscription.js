@@ -6,7 +6,8 @@ module.exports = {
   isBackReady: {
     subscribe: () => pubsub.asyncIterator('SERVER_STATUS'),
   },
-  isPupBusy: {
-    subscribe: () => pubsub.asyncIterator('PUP_STATUS'),
+
+  workerStatus: {
+    subscribe: () => pubsub.asyncIterator('WORKER_STATUS'),
   },
 };

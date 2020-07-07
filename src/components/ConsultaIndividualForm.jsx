@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  FormGroup, InputGroup, Intent, Button, HTMLSelect, H3,
+  FormGroup, InputGroup, Intent, Button, HTMLSelect, H3, Checkbox,
 } from '@blueprintjs/core';
 import { Container, Row, Col } from 'react-grid-system';
 import { validate } from 'gerador-validador-cpf';
@@ -54,41 +54,23 @@ function ConsultaIndividualForm() {
 
   const [ano, setAno] = useState('2020');
 
+  const [pdf, setPdf] = useState(false);
+
   const [liberado, setLiberado] = useState(false);
 
   useEffect(() => {
     setLiberado(cpfIsValid && nomeIsValid && codigoAcessoIsValid && senhaIsValid);
   }, [cpfIsValid, nomeIsValid, codigoAcessoIsValid, senhaIsValid]);
 
-  const handleInputChange = (setter) => (e) => setter(e.target?.value || e.currentTarget.value);
-
   const [pessoa, setPessoa] = useState(null);
 
   const CONSULTA_QUERY = gql`
-    query consultaUnica($pessoa: PessoaInput!, $ano: String!) {
-      consultaUnica(pessoa: $pessoa, ano: $ano)
+    query consultaUnica($consulta: ConsultaInput!, $pdf: Boolean) {
+      consultaUnica(consulta: $consulta, pdf: $pdf)
     }
   `;
 
-  const [consultar, { loading, data }] = useLazyQuery(CONSULTA_QUERY);
-
-  useEffect(() => {
-    if (pessoa) consultar({ variables: { pessoa, ano } });
-  }, [pessoa]);
-
-  useEffect(() => {
-    if (data?.consultaUnica === false) {
-      AppToaster.show({
-        message: 'Já existe uma consulta em execução, tente novamente mais tarde.',
-      });
-    }
-
-    if (data?.consultaUnica === true) {
-      AppToaster.show({
-        message: 'Consulta iniciada.',
-      });
-    }
-  }, [loading, data]);
+  const [consultar, { data }] = useLazyQuery(CONSULTA_QUERY);
 
   const consultaIndividual = () => {
     setPessoa({
@@ -98,6 +80,21 @@ function ConsultaIndividualForm() {
       senha,
     });
   };
+
+  useEffect(() => {
+    if (pessoa) consultar({ variables: { consulta: { pessoa, ano }, pdf } });
+  }, [pessoa]);
+
+  useEffect(() => {
+    if (data?.consultaUnica === true) {
+      AppToaster.show({
+        message: 'Consulta iniciada.',
+      });
+    }
+  }, [data]);
+
+  const handleInputChange = (setter) => (e) => setter(e.target?.value || e.currentTarget.value);
+  const handleCheckboxChange = (val, setter) => () => setter(!val);
 
   return (
     <Container fluid>
@@ -170,6 +167,19 @@ function ConsultaIndividualForm() {
               options={['2017', '2018', '2019', '2020']}
               onChange={handleInputChange(setAno)}
               id="ano-select"
+              style={{ width: 100 }}
+            />
+          </FormGroup>
+        </Col>
+        <Col>
+          <FormGroup
+            label="Salvar Extrato"
+            labelFor="check-pdf"
+          >
+            <Checkbox
+              id="check-pdf"
+              checked={pdf}
+              onChange={handleCheckboxChange(pdf, setPdf)}
             />
           </FormGroup>
         </Col>

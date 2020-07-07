@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+
 import { FileInput } from '@blueprintjs/core';
 import { xlsxToObjs } from '../services/xlsx.service';
 
-function ImporatarCSV() {
+function ImportarXLS(props) {
+  const { onData } = props;
+
   const [text, setText] = useState('Selecione um arquivo');
 
   const inputChange = async (e) => {
@@ -12,9 +16,9 @@ function ImporatarCSV() {
 
     const arquivo = e.target.files[0];
 
-    console.log(await xlsxToObjs(arquivo));
+    setText(arquivo.name);
 
-    return setText(arquivo.name);
+    return onData(await xlsxToObjs(arquivo));
   };
 
   return (
@@ -22,10 +26,18 @@ function ImporatarCSV() {
       text={text}
       onInputChange={inputChange}
       inputProps={{
-        accept: '.xls, .xlsx',
+        accept: ['.xls', '.xlsx'].join(','),
       }}
     />
   );
 }
 
-export default ImporatarCSV;
+ImportarXLS.propTypes = {
+  onData: PropTypes.func,
+};
+
+ImportarXLS.defaultProps = {
+  onData: () => null,
+};
+
+export default ImportarXLS;

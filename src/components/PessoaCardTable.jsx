@@ -19,28 +19,16 @@ function PessoaCardTable(props) {
     }
   `;
 
-  const [tbody, setTbody] = useState(<tbody />);
+  const [consultas, setConsultas] = useState([]);
 
   const { loading, data } = useQuery(GET_CONSULTAS, {
     variables: { cpf },
   });
 
   useEffect(() => {
-    if (!data) return;
-
-    console.log(data);
-
-    setTbody(
-      <tbody>
-        {data.consultas.map((consulta) => (
-          <tr key={consulta.id}>
-            <td>{consulta.ano}</td>
-            <td>{consulta.status}</td>
-            <td>{moment(consulta.dataHora).format('DD/MM/YYYY HH:mm')}</td>
-          </tr>
-        ))}
-      </tbody>,
-    );
+    if (data) {
+      setConsultas(data.consultas || []);
+    }
   }, [data]);
 
   return (
@@ -52,7 +40,15 @@ function PessoaCardTable(props) {
           <th>Data da Consulta</th>
         </tr>
       </thead>
-      {tbody}
+      <tbody>
+        {consultas.map((consulta) => (
+          <tr key={consulta.id}>
+            <td>{consulta.ano}</td>
+            <td>{consulta.status}</td>
+            <td>{moment(consulta.dataHora).format('DD/MM/YYYY HH:mm')}</td>
+          </tr>
+        ))}
+      </tbody>
     </HTMLTable>
   );
 }

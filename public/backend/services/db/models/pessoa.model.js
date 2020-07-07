@@ -80,6 +80,7 @@ Pessoa.init({
   },
   nome: DataTypes.STRING,
   codigoAcesso: DataTypes.STRING,
+  codigoAcessoValidade: DataTypes.TIME,
   senha: DataTypes.STRING,
 }, {
   sequelize: db(),
