@@ -28,15 +28,13 @@ function PessoasPage() {
     }
     if (data) {
       setFilteredData(
-        data.filter((el) => el.nome.toUpperCase().includes(filterInput.toUpperCase())),
+        data.pessoas.filter((el) => el.nome.toUpperCase().includes(filterInput.toUpperCase())),
       );
     }
   }, [filterInput]);
 
   useEffect(() => {
     if (!loading && data) setFilteredData(data.pessoas);
-
-    console.log(data);
   }, [loading, data]);
 
   return (

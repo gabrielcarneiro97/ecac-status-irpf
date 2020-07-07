@@ -26,10 +26,10 @@ function PessoaCardTable(props) {
   });
 
   useEffect(() => {
-    if (data) {
+    if (!loading && data) {
       setConsultas(data.consultas || []);
     }
-  }, [data]);
+  }, [data, loading]);
 
   return (
     <HTMLTable striped style={{ width: '100%' }} className={loading ? Classes.SKELETON : ''}>

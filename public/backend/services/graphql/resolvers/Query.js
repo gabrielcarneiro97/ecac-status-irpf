@@ -7,12 +7,15 @@ module.exports = {
   pessoa: async (_, { cpf }) => (await Pessoa.findByPk(cpf))?.toJSON() || null,
   pessoas: async () => (await Pessoa.findAll({ order: [['nome', 'ASC']] })).map((c) => c.toJSON()),
 
-  consultas: async (_, { cpf }) => (await Consulta.porCpf(cpf)).map((c) => c.toJSON()),
+  consultas: async (_, { cpf }) => {
+    console.log('consultas');
+    return (await Consulta.porCpf(cpf)).map((c) => c.toJSON());
+  },
 
   consultaUnica: async (_, { pessoa, ano, pdf }) => {
     if (worker.isBusy()) return false;
 
-    worker.consultaUnica(pessoa, ano, pdf).then(async (consulta) => {
+    worker.consultaUnica(pessoa, ano, pdf).then(async ({ consulta }) => {
       const pessoaDb = await Pessoa.criarAtualizar(pessoa);
       await pessoaDb.inserirConsulta(consulta.ano, consulta.status);
     });
@@ -20,7 +23,18 @@ module.exports = {
     return true;
   },
 
-  consultaMultipla: async () => true,
+  consultaMultipla: async (_, { consultas, pdf }) => {
+    if (worker.isBusy()) return false;
+
+    worker.consultaMultipla(consultas, pdf).then(async (consultasRes) => {
+      consultasRes.forEach(async ({ consulta, pessoa }) => {
+        const pessoaDb = await Pessoa.criarAtualizar(pessoa);
+        await pessoaDb.inserirConsulta(consulta.ano, consulta.status);
+      });
+    });
+
+    return true;
+  },
 
   workerStatus: async () => worker.workerStatus(),
 };

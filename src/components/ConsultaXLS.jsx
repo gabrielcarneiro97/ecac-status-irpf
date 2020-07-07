@@ -43,7 +43,7 @@ function ConsultaXLS() {
   const handleClick = () => {
     consultar({
       variables: {
-        consultas: planilhaData.map(({ ano, ...pessoa }) => ({ pessoa, ano })),
+        consultas: planilhaData.map(({ ano, ...pessoa }) => ({ pessoa, ano: ano.toString() })),
         pdf,
       },
     });

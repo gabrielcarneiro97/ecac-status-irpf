@@ -20,13 +20,13 @@ const irpfDecUrl = (ano) => `${decUrl}/${ano}`;
 
 async function setBrowser() {
   const chromiumPath = isDev ? chromium.path : chromium.path.replace('app.asar', 'app.asar.unpacked');
-  return puppeteer.launch({ headless: true, executablePath: chromiumPath, timeout: 0 });
+  return puppeteer.launch({ headless: true, executablePath: chromiumPath });
 }
 
 async function setPage(browser) {
   const page = await browser.newPage();
   await page.setViewport({ width: 1366, height: 768 });
-  await page.setDefaultNavigationTimeout(0);
+  // await page.setDefaultNavigationTimeout(0);
   return page;
 }
 
@@ -47,13 +47,16 @@ async function executeLogin(page, contribInfos) {
     document.querySelector(selectors.submit).click();
   }, ecacLoginSelectors, contribInfos);
 
-  await page.waitForNavigation({ waitUntil: 'networkidle0' });
+  await Promise.race([
+    page.waitForSelector('#carregandoServicos', { hidden: true }),
+    page.waitForNavigation({ waitUntil: 'networkidle2' }),
+  ]);
 
   return true;
 }
 
 async function gotoIRPF(page, anoConsulta) {
-  await page.goto(irpfUrl, { waitUntil: 'networkidle0' });
+  await page.goto(irpfUrl, { waitUntil: 'networkidle2' });
 
   await page.evaluate(({ janelaAjuda, fecharJanelaAjuda }) => {
     if (document.querySelector(janelaAjuda)) {
@@ -99,24 +102,30 @@ async function consultaPorCodigoAcesso(pessoa, ano, savePDF) {
   const browser = await setBrowser();
   try {
     const page = await setPage(browser);
+    console.log('page');
 
     await executeLogin(page, pessoa);
+    console.log('login');
 
     await gotoIRPF(page, ano);
+    console.log('irpf');
 
     const status = await getStatus(page);
+    console.log('status');
 
     if (savePDF) {
       await gotoExtrato(page);
       await saveExtratoToPDF(page, pessoa, ano);
     }
 
-    await finish(browser);
+    finish(browser);
+    console.log('end');
 
     return { status, ano, pessoaCpf: pessoa.cpf };
   } catch (err) {
     await finish(browser);
-    throw err;
+    console.error(err);
+    return { status: 'Falha no Acesso', ano, pessoaCpf: pessoa.cpf };
   }
 }
 
@@ -125,7 +134,7 @@ async function rfbAccessTime() {
   const browser = await setBrowser();
   const page = await setPage(browser);
 
-  await page.goto(ecacLoginUrl, { waitUntil: 'networkidle0' });
+  await page.goto(ecacLoginUrl, { waitUntil: 'networkidle2' });
 
   await finish(browser);
 

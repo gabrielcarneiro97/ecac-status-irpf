@@ -8,9 +8,11 @@ server.listen().then(async ({ url, subscriptionsUrl }) => {
   console.log(`🚀  Server ready at ${url}`);
   console.log(`🚀 Subscriptions ready at ${subscriptionsUrl}`);
 
-  await init();
+  await Promise.all([
+    loadChromium(),
+    init(),
+  ]);
 
-  await loadChromium();
-
+  console.log('OK!');
   ready();
 });
