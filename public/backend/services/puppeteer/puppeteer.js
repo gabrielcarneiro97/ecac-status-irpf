@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer-core');
 const chromium = require('chromium');
 const isDev = require('electron-is-dev');
+const { validate } = require('gerador-validador-cpf');
 
 const {
   ecacLoginUrl,
@@ -26,7 +27,7 @@ async function setBrowser() {
 async function setPage(browser) {
   const page = await browser.newPage();
   await page.setViewport({ width: 1366, height: 768 });
-  // await page.setDefaultNavigationTimeout(0);
+  await page.setDefaultNavigationTimeout(10000);
   return page;
 }
 
@@ -47,6 +48,12 @@ async function executeLogin(page, contribInfos) {
     document.querySelector(selectors.submit).click();
   }, ecacLoginSelectors, contribInfos);
 
+  const err = await page.$('.login-caixa-erros-validacao');
+
+  console.log(err);
+
+  if (err) return false;
+
   await Promise.race([
     page.waitForSelector('#carregandoServicos', { hidden: true }),
     page.waitForNavigation({ waitUntil: 'networkidle2' }),
@@ -56,15 +63,23 @@ async function executeLogin(page, contribInfos) {
 }
 
 async function gotoIRPF(page, anoConsulta) {
-  await page.goto(irpfUrl, { waitUntil: 'networkidle2' });
+  await page.goto(irpfUrl, { waitUntil: 'networkidle0' });
 
-  await page.evaluate(({ janelaAjuda, fecharJanelaAjuda }) => {
-    if (document.querySelector(janelaAjuda)) {
-      if (document.querySelector(janelaAjuda).offsetWidth !== 0) {
-        document.querySelector(fecharJanelaAjuda).click();
-      }
-    }
-  }, irpfSelectors);
+  // testar fechamento de janela de ajuda
+
+  const janelaAjuda = await page.$(irpfSelectors.janelaAjuda);
+
+  if (janelaAjuda && janelaAjuda?.offsetWidth !== 0) {
+    page.click(irpfSelectors.fecharJanelaAjuda);
+  }
+
+  // await page.evaluate(({ janelaAjuda, fecharJanelaAjuda }) => {
+  //   if (document.querySelector(janelaAjuda)) {
+  //     if (document.querySelector(janelaAjuda).offsetWidth !== 0) {
+  //       document.querySelector(fecharJanelaAjuda).click();
+  //     }
+  //   }
+  // }, irpfSelectors);
 
   await page.goto(irpfDecUrl(anoConsulta), { waitUntil: 'networkidle2' });
 
@@ -99,19 +114,24 @@ async function finish(browser) {
 }
 
 async function consultaPorCodigoAcesso(pessoa, ano, savePDF) {
+  if (!validate(pessoa.cpf)) {
+    return { status: 'CPF Inválido', ano, pessoaCpf: pessoa.cpf };
+  }
+
   const browser = await setBrowser();
   try {
     const page = await setPage(browser);
-    console.log('page');
 
-    await executeLogin(page, pessoa);
-    console.log('login');
+    const login = await executeLogin(page, pessoa);
+
+    if (!login) {
+      finish(browser);
+      return { status: 'Código de Acesso ou Senha Inválidos', ano, pessoaCpf: pessoa.cpf };
+    }
 
     await gotoIRPF(page, ano);
-    console.log('irpf');
 
     const status = await getStatus(page);
-    console.log('status');
 
     if (savePDF) {
       await gotoExtrato(page);
@@ -119,12 +139,10 @@ async function consultaPorCodigoAcesso(pessoa, ano, savePDF) {
     }
 
     finish(browser);
-    console.log('end');
 
     return { status, ano, pessoaCpf: pessoa.cpf };
   } catch (err) {
-    await finish(browser);
-    console.error(err);
+    // finish(browser);
     return { status: 'Falha no Acesso', ano, pessoaCpf: pessoa.cpf };
   }
 }

@@ -41,8 +41,6 @@ async function createThread(iterator, pdf = false, prop = 0, id, data = []) {
 
   if (done) return data;
 
-  console.log(value);
-
   const consulta = await consultaPorCodigoAcesso(value.pessoa, value.ano, pdf);
   progress += prop;
 
@@ -58,7 +56,8 @@ async function consultaMultipla(consultas, pdf) {
 
   busy = true;
 
-  const threadsQnt = 1;
+  const threadsQnt = parseInt(await Config.getConfig('threadsMax'), 10);
+  // const threadsQnt = 4;
 
   const consultasIterable = consultasGenerator(consultas);
   const total = consultas.length;
