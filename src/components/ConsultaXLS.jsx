@@ -5,7 +5,7 @@ import { useLazyQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 import {
-  Button, H3, Intent, Checkbox,
+  Button, H3, Intent, Checkbox, H4, Classes,
 } from '@blueprintjs/core';
 
 import XLSX from 'xlsx';
@@ -18,10 +18,6 @@ import AppToaster from '../services/toaster';
 function ConsultaXLS() {
   const [planilhaData, setPlanilhaData] = useState([]);
   const [pdf, setPdf] = useState(false);
-
-  useEffect(() => {
-    console.log(planilhaData);
-  }, [planilhaData]);
 
   const CONSULTA_QUERY = gql`
   query consultaMultipla($consultas: [ConsultaInput!]!, $pdf: Boolean) {
@@ -58,6 +54,24 @@ function ConsultaXLS() {
       </Row>
       <Row>
         <Col>
+          <H4>
+            Instruções de Uso:
+          </H4>
+          <ol className={Classes.LIST}>
+            <li>Baixe a planilha modelo clicando no botão abaixo.</li>
+            <li>
+              Preencha a planilha de acordo com as colunas indicadas.
+              ATENÇÃO: NÃO APAGAR A PRIMEIRA LINHA!
+            </li>
+            <li>
+              Selecione o arquivo e clique no botão &quot;Consultar&quot;.
+            </li>
+          </ol>
+        </Col>
+      </Row>
+
+      <Row style={{ marginBottom: 20 }}>
+        <Col>
           <Button onClick={() => {
             const wb = planilhaModelo();
             XLSX.writeFile(wb, 'importacao.xlsx');
@@ -66,11 +80,12 @@ function ConsultaXLS() {
             Baixar Arquivo Modelo
           </Button>
         </Col>
-        <Col>
+      </Row>
+
+      <Row>
+        <Col xs={7}>
           <ImporatarXLS onData={setPlanilhaData} />
         </Col>
-      </Row>
-      <Row>
         <Col>
           <Checkbox
             label="Salvar Extrato"

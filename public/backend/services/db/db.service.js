@@ -10,7 +10,7 @@ async function init() {
   if (!checkStatus) {
     await Config.createConfigs([
       { nome: 'set', valor: 'OK' },
-      { nome: 'threadsMax', valor: '10' },
+      { nome: 'threadsMax', valor: '5' },
     ]);
   }
 

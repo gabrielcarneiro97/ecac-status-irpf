@@ -30,6 +30,7 @@
     "moment": "^2.24.0",
     "papaparse": "^5.2.0",
     "prop-types": "^15.7.2",
+    "puppeteer-cluster": "^0.21.0",
     "puppeteer-core": "^5.0.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",

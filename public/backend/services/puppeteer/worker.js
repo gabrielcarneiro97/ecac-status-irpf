@@ -1,6 +1,9 @@
-const pubsup = require('../graphql/pubsub');
+const { Cluster } = require('puppeteer-cluster');
+const puppeteer = require('puppeteer-core');
+const chromium = require('chromium');
+const isDev = require('electron-is-dev');
 
-const Config = require('../db/models/config.model');
+const pubsup = require('../graphql/pubsub');
 
 const { consultaPorCodigoAcesso } = require('./puppeteer');
 
@@ -27,50 +30,42 @@ async function consultaUnica(pessoa, ano, pdf) {
   return { consulta, pessoa };
 }
 
-function createArray(fun, size, now = []) {
-  if (size === 0) return now;
-  return createArray(fun, size - 1, [...now, fun(now.length)]);
-}
-
-function* consultasGenerator(consultas) {
-  yield* consultas;
-}
-
-async function createThread(iterator, pdf = false, prop = 0, id, data = []) {
-  const { done, value } = iterator.next();
-
-  if (done) return data;
-
-  const consulta = await consultaPorCodigoAcesso(value.pessoa, value.ano, pdf);
-  progress += prop;
-
-  console.log(`${id} -> ${value.pessoa.nome}: ${consulta.ano} - ${consulta.status}`);
-
-  return createThread(iterator, pdf, prop, id, [...data, { consulta, pessoa: value.pessoa }]);
-}
-
-async function consultaMultipla(consultas, pdf) {
+async function consultaMultipla(consultas, pdf, saveEach) {
   if (busy) {
     return { busy };
   }
 
   busy = true;
 
-  const threadsQnt = parseInt(await Config.getConfig('threadsMax'), 10);
-  // const threadsQnt = 4;
+  const chromiumPath = isDev ? chromium.path : chromium.path.replace('app.asar', 'app.asar.unpacked');
 
-  const consultasIterable = consultasGenerator(consultas);
+  const cluster = await Cluster.launch({
+    concurrency: Cluster.CONCURRENCY_BROWSER,
+    maxConcurrency: 3,
+    // monitor: true,
+    puppeteer,
+    puppeteerOptions: { headless: true, executablePath: chromiumPath },
+  });
+
   const total = consultas.length;
   const prop = 1 / total;
 
-  const threads = createArray((i) => createThread(consultasIterable, pdf, prop, i), threadsQnt);
+  await cluster.task(async ({ page, data: { pessoa, ano }, worker: { id } }) => {
+    const consulta = await consultaPorCodigoAcesso(pessoa, ano, pdf, page);
+    console.log(`${id} -> ${pessoa.nome}: ${consulta.ano} - ${consulta.status}`);
+    await saveEach({ consulta, pessoa });
+    progress += prop;
+  });
 
-  const res = await Promise.all(threads);
+  consultas.forEach((consulta) => cluster.queue(consulta));
+
+  await cluster.idle();
+  await cluster.close();
 
   busy = false;
   progress = 0;
 
-  return res.flat();
+  return true;
 }
 
 const workerStatus = () => ({ isBusy: isBusy(), progress });

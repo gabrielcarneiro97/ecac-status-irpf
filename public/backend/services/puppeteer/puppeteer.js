@@ -27,37 +27,26 @@ async function setBrowser() {
 async function setPage(browser) {
   const page = await browser.newPage();
   await page.setViewport({ width: 1366, height: 768 });
-  await page.setDefaultNavigationTimeout(10000);
   return page;
 }
 
-async function executeLogin(page, contribInfos) {
+async function executeLogin(page, pessoa) {
   await page.goto(ecacLoginUrl, { waitUntil: 'networkidle2' });
 
-  await page.evaluate((selectors, contrib) => {
-    const extractLogin = () => ({
-      cpf: contrib.cpf,
-      senha: contrib.senha,
-      codigoAcesso: contrib.codigoAcesso,
-    });
+  await page.evaluate((s, p) => {
+    document.querySelector(s.cpf).value = p.cpf;
+    document.querySelector(s.codigoAcesso).value = p.codigoAcesso;
+    document.querySelector(s.senha).value = p.senha;
+    document.querySelector(s.submit).click();
+  }, ecacLoginSelectors, pessoa);
 
-    const login = extractLogin();
-    Object.keys(login).forEach((k) => {
-      document.querySelector(selectors[k]).value = login[k];
-    });
-    document.querySelector(selectors.submit).click();
-  }, ecacLoginSelectors, contribInfos);
+  try {
+    const err = await page.$('.login-caixa-erros-validacao');
 
-  const err = await page.$('.login-caixa-erros-validacao');
+    if (err) return false;
+  } catch {} // eslint-disable-line
 
-  console.log(err);
-
-  if (err) return false;
-
-  await Promise.race([
-    page.waitForSelector('#carregandoServicos', { hidden: true }),
-    page.waitForNavigation({ waitUntil: 'networkidle2' }),
-  ]);
+  await page.waitForSelector('#carregandoServicos', { hidden: true });
 
   return true;
 }
@@ -65,21 +54,12 @@ async function executeLogin(page, contribInfos) {
 async function gotoIRPF(page, anoConsulta) {
   await page.goto(irpfUrl, { waitUntil: 'networkidle0' });
 
-  // testar fechamento de janela de ajuda
-
-  const janelaAjuda = await page.$(irpfSelectors.janelaAjuda);
-
-  if (janelaAjuda && janelaAjuda?.offsetWidth !== 0) {
-    page.click(irpfSelectors.fecharJanelaAjuda);
-  }
-
-  // await page.evaluate(({ janelaAjuda, fecharJanelaAjuda }) => {
-  //   if (document.querySelector(janelaAjuda)) {
-  //     if (document.querySelector(janelaAjuda).offsetWidth !== 0) {
-  //       document.querySelector(fecharJanelaAjuda).click();
-  //     }
-  //   }
-  // }, irpfSelectors);
+  await page.evaluate(({ janelaAjuda, fecharJanelaAjuda }) => {
+    const janela = document.querySelector(janelaAjuda);
+    if (janela && janela?.offsetWidth !== 0) {
+      document.querySelector(fecharJanelaAjuda).click();
+    }
+  }, irpfSelectors);
 
   await page.goto(irpfDecUrl(anoConsulta), { waitUntil: 'networkidle2' });
 
@@ -113,19 +93,24 @@ async function finish(browser) {
   return browser.close();
 }
 
-async function consultaPorCodigoAcesso(pessoa, ano, savePDF) {
+async function consultaPorCodigoAcesso(pessoa, ano, savePDF, clusterPage) {
   if (!validate(pessoa.cpf)) {
     return { status: 'CPF Inválido', ano, pessoaCpf: pessoa.cpf };
   }
 
-  const browser = await setBrowser();
-  try {
-    const page = await setPage(browser);
+  let browser;
+  let page = clusterPage;
 
+  if (!clusterPage) {
+    browser = await setBrowser();
+    page = await setPage(browser);
+  }
+
+  try {
     const login = await executeLogin(page, pessoa);
 
     if (!login) {
-      finish(browser);
+      if (browser) finish(browser);
       return { status: 'Código de Acesso ou Senha Inválidos', ano, pessoaCpf: pessoa.cpf };
     }
 
@@ -138,11 +123,11 @@ async function consultaPorCodigoAcesso(pessoa, ano, savePDF) {
       await saveExtratoToPDF(page, pessoa, ano);
     }
 
-    finish(browser);
-
+    if (browser) finish(browser);
     return { status, ano, pessoaCpf: pessoa.cpf };
   } catch (err) {
-    // finish(browser);
+    console.error(err);
+    if (browser) finish(browser);
     return { status: 'Falha no Acesso', ano, pessoaCpf: pessoa.cpf };
   }
 }

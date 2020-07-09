@@ -25,6 +25,8 @@ function ImportarXLS(props) {
     <FileInput
       text={text}
       onInputChange={inputChange}
+      style={{ width: '100%' }}
+      buttonText="Buscar"
       inputProps={{
         accept: ['.xls', '.xlsx'].join(','),
       }}

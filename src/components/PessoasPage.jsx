@@ -34,6 +34,7 @@ function PessoasPage() {
   }, [filterInput]);
 
   useEffect(() => {
+    console.log(data);
     if (!loading && data) setFilteredData(data.pessoas);
   }, [loading, data]);
 
