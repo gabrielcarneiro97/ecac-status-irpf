@@ -15,6 +15,8 @@ function SideMenu() {
       <MenuItem icon="search" text="Consulta" onClick={goto('/')} />
       <MenuDivider />
       <MenuItem icon="people" text="Pessoas" onClick={goto('/pessoas')} />
+      <MenuDivider />
+      <MenuItem icon="paperclip" text="Relatórios" onClick={goto('/relatorios')} />
     </Menu>
   );
 }

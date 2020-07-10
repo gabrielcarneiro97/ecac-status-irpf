@@ -13,6 +13,7 @@ import Footer from './Footer';
 import SideMenu from './SideMenu';
 import ConsultaPage from './ConsultaPage';
 import PessoasPage from './PessoasPage';
+import RelatoriosPage from './RelatoriosPage';
 
 function App() {
   const QUERY = gql`
@@ -70,6 +71,7 @@ function App() {
         <Col style={{ padding: 0, margin: 20 }}>
           <Switch>
             <Route exact path="/pessoas" component={PessoasPage} />
+            <Route exact path="/relatorios" component={RelatoriosPage} />
             <Route path="/" component={ConsultaPage} />
           </Switch>
         </Col>

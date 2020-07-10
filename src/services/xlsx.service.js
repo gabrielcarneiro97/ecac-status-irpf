@@ -10,11 +10,11 @@ export function planilhaModelo() {
   return wb;
 }
 
-export function objsToXlsx(objs) {
+export function objsToXlsx(objs, filename) {
   const sheet = XLSX.utils.json_to_sheet(objs);
   const wb = XLSX.utils.book_new();
 
-  XLSX.utils.book_append_sheet(wb, sheet, 'importacao.xlsx');
+  XLSX.utils.book_append_sheet(wb, sheet, filename);
 
   return wb;
 }

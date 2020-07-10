@@ -2,7 +2,6 @@
 
 module.exports = {
   Date: require('./Date'),
-  Pessoa: require('./Pessoa'),
   Query: require('./Query'),
   Mutation: require('./Mutation'),
   Subscription: require('./Subscription'),

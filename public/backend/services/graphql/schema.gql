@@ -16,6 +16,7 @@ type Pessoa {
   senha: String
 
   consultas: [Consulta]!
+  ultimaConsulta: Consulta
 }
 
 type WorkerStatus {
@@ -45,6 +46,8 @@ type Query {
 
   consultaUnica(consulta: ConsultaInput!, pdf: Boolean): Boolean!
   consultaMultipla(consultas: [ConsultaInput!]!, pdf: Boolean): Boolean!
+
+  pessoasUltimasConsultas: [Pessoa!]!
 
   workerStatus: WorkerStatus!
 }
