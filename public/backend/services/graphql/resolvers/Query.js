@@ -1,8 +1,6 @@
 const Pessoa = require('../../db/models/pessoa.model');
 const { Consulta } = require('../../db/models');
 
-const { db } = require('../../db/connection.service');
-
 const worker = require('../../puppeteer/worker');
 
 module.exports = {
@@ -63,29 +61,6 @@ module.exports = {
     });
 
     return true;
-  },
-
-  pessoasUltimasConsultas: async () => {
-    const sequelize = db();
-
-    const pessoas = await Pessoa.findAll({ order: [['nome', 'ASC']] });
-
-    const consultas = await sequelize.query(
-      `SELECT c1.*
-      FROM tb_consulta c1 LEFT JOIN tb_consulta c2
-       ON (c1.pessoaCpf = c2.pessoaCpf AND c1.dataHora < c2.dataHora)
-      WHERE c2.dataHora IS NULL;`,
-      {
-        model: Consulta,
-        mapToModel: true,
-      },
-    );
-
-    return pessoas.map((pessoa) => {
-      const ultimaConsulta = consultas.find((consulta) => consulta.pessoaCpf === pessoa.cpf);
-
-      return { ...pessoa.toJSON(), ultimaConsulta };
-    });
   },
   workerStatus: async () => worker.workerStatus(),
 };

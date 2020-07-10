@@ -9,11 +9,11 @@ import moment from 'moment';
 import { Button } from '@blueprintjs/core';
 import { objsToXlsx } from '../services/xlsx.service';
 
-export default function RelatorioTodasConsultas() {
+export default function RelatorioUltimaConsulta() {
   const QUERY = gql`
     query {
       pessoas {
-        cpf, nome, consultas { ano, status, dataHora }
+        cpf, nome, ultimaConsulta { ano, status, dataHora }
       }
     }
   `;
@@ -23,18 +23,16 @@ export default function RelatorioTodasConsultas() {
   useEffect(() => {
     if (called && !loading && data) {
       const { pessoas } = data;
-      const res = pessoas.map((pessoa) => pessoa.consultas.map(
-        (consulta) => ({
-          cpf: pessoa.cpf,
-          nome: pessoa.nome,
-          ...consulta,
-          dataHora: moment(consulta.dataHora).format('DD/MM/YYYY HH:mm'),
-        }),
-      )).flat();
+      const res = pessoas.map((pessoa) => ({
+        cpf: pessoa.cpf,
+        nome: pessoa.nome,
+        ...pessoa.ultimaConsulta,
+        dataHora: moment(pessoa.ultimaConsulta.dataHora).format('DD/MM/YYYY HH:mm'),
+      }));
 
-      const wb = objsToXlsx(res, 'todasConsultas.xlsx');
+      const wb = objsToXlsx(res, 'ultimaConsulta.xlsx');
 
-      XLSX.writeFile(wb, 'todasConsultas.xlsx');
+      XLSX.writeFile(wb, 'ultimaConsulta.xlsx');
     }
   }, [called, loading]);
 
@@ -43,7 +41,7 @@ export default function RelatorioTodasConsultas() {
       onClick={pegarDados}
       disabled={loading && called}
     >
-      Todas as Consultas
+      Últimas Consultas
     </Button>
   );
 }

@@ -47,8 +47,6 @@ type Query {
   consultaUnica(consulta: ConsultaInput!, pdf: Boolean): Boolean!
   consultaMultipla(consultas: [ConsultaInput!]!, pdf: Boolean): Boolean!
 
-  pessoasUltimasConsultas: [Pessoa!]!
-
   workerStatus: WorkerStatus!
 }
 
